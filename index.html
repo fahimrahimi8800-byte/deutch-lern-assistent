@@ -1,0 +1,1791 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Deutsch Lern-Assistent — Verben, Artikel, Wörterbuch, Akkusativ & Dativ</title>
+<style>
+  :root {
+    --bg-gradient: linear-gradient(135deg, #eef2ff 0%, #f0fdfa 50%, #fefce8 100%);
+    --card: #ffffff;
+    --border: #cbd5e1;
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+    --teal: #0d9488;
+    --teal-hover: #0f766e;
+    --purple: #7c3aed;
+    --purple-hover: #6d28d9;
+    --text: #0f172a;
+    --muted: #64748b;
+    --soft: #f8fafc;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 22px 14px 48px;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--bg-gradient);
+    min-height: 100vh;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* Vibrant Top Banner with subtle "created by Fahim rahimi" */
+  .topbar {
+    background: linear-gradient(125deg, #0f172a 0%, #1e3a8a 52%, #0f766e 100%);
+    color: #fff;
+    padding: 20px 24px;
+    border-radius: 18px;
+    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.16);
+    position: relative;
+    overflow: hidden;
+  }
+  .topbar::after {
+    content: "";
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    pointer-events: none;
+  }
+  .topbar-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .topbar h1 {
+    margin: 0;
+    font-size: 1.32rem;
+    letter-spacing: -0.01em;
+    color: #ffffff;
+  }
+  .creator-tag {
+    font-size: 0.84rem;
+    font-style: italic;
+    font-weight: 500;
+    color: #e2e8f0;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 4px 12px;
+    border-radius: 999px;
+    letter-spacing: 0.02em;
+  }
+  .topbar p {
+    margin: 0;
+    font-size: 0.89rem;
+    color: #e2e8f0;
+  }
+
+  /* Colorful Modern Cards */
+  .card {
+    background: var(--card);
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 20px 22px;
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.05);
+    border-top: 4px solid var(--primary);
+  }
+  .card.card-teal { border-top-color: var(--teal); }
+  .card.card-purple { border-top-color: var(--purple); }
+  .card.card-slate { border-top-color: #475569; }
+
+  .card h2 {
+    margin: 0 0 6px;
+    font-size: 1.15rem;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .badge-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 700;
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+  }
+  .badge-num.teal {
+    background: linear-gradient(135deg, #0d9488, #14b8a6);
+    box-shadow: 0 2px 6px rgba(13, 148, 136, 0.3);
+  }
+  .badge-num.purple {
+    background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+    box-shadow: 0 2px 6px rgba(124, 58, 237, 0.3);
+  }
+  .badge-num.slate {
+    background: linear-gradient(135deg, #334155, #475569);
+    box-shadow: 0 2px 6px rgba(51, 65, 85, 0.25);
+  }
+
+  .hint {
+    margin: 0 0 11px;
+    font-size: 0.89rem;
+    color: #475569;
+  }
+
+  /* Autocomplete wrapper */
+  .ac-wrap {
+    position: relative;
+    width: 100%;
+  }
+  input[type="text"], textarea, select {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 1rem;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 11px;
+    background: #ffffff;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  input[type="text"]:focus, textarea:focus, select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3.5px rgba(37, 99, 235, 0.14);
+  }
+  .ac-list {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border: 1px solid #94a3b8;
+    border-radius: 11px;
+    max-height: 240px;
+    overflow-y: auto;
+    z-index: 999;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.16);
+    display: none;
+  }
+  .ac-item {
+    padding: 10px 14px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 0.94rem;
+  }
+  .ac-item:last-child { border-bottom: none; }
+  .ac-item:hover, .ac-item.active {
+    background: #eff6ff;
+  }
+  .ac-word { font-weight: 700; color: #0f172a; }
+  .ac-sub { font-size: 0.82rem; color: #64748b; }
+  .ac-online-note { padding: 7px 12px; color: #475569; background: #f8fafc; font-size: 0.78rem; border-bottom: 1px solid #e2e8f0; }
+  .ac-item .ac-tag { font-size: 0.72rem; color: #2563eb; white-space: nowrap; margin-left: 8px; }
+
+  .result-box {
+    margin-top: 14px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 14px;
+  }
+
+  /* 3 Tenses Cards Grid: Präsens, Perfekt, Futur I */
+  .tenses-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  @media (max-width: 680px) {
+    .tenses-grid { grid-template-columns: 1fr; }
+  }
+  .tense-card {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 10px 12px;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid #2563eb;
+  }
+  .tense-card.t-praesens { border-left-color: #0d9488; background: #f0fdfa; }
+  .tense-card.t-perfekt { border-left-color: #2563eb; background: #eff6ff; }
+  .tense-card.t-futur { border-left-color: #7c3aed; background: #f5f3ff; }
+
+  .tense-title {
+    font-size: 0.76rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    display: block;
+    margin-bottom: 3px;
+  }
+  .t-praesens .tense-title { color: #0f766e; }
+  .t-perfekt .tense-title { color: #1d4ed8; }
+  .t-futur .tense-title { color: #6d28d9; }
+
+  .tense-form {
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 5px;
+  }
+  .tense-ex {
+    font-size: 0.85rem;
+    color: #334155;
+    line-height: 1.4;
+    border-top: 1px dashed rgba(148, 163, 184, 0.45);
+    padding-top: 5px;
+  }
+
+  /* Personal Conjugation Box (ich, du, er/sie/es, wir, ihr, sie/Sie) */
+  .conj-box {
+    margin-top: 10px;
+    padding: 11px 13px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+  }
+  .conj-header {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #0f766e;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .conj-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 7px;
+  }
+  @media (max-width: 600px) {
+    .conj-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  .conj-cell {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .conj-pron {
+    color: #64748b;
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+  .conj-verb {
+    color: #0f172a;
+    font-weight: 700;
+  }
+
+  .result-row {
+    margin: 5px 0;
+    font-size: 0.96rem;
+  }
+  .result-row strong { color: #0f172a; }
+
+  .article-pill {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 1.08rem;
+    margin-right: 6px;
+  }
+  .art-der { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+  .art-die { background: #fce7f3; color: #9d174d; border: 1px solid #f9a8d4; }
+  .art-das { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+
+  .trilingual-box {
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 9px;
+  }
+  @media (max-width: 640px) {
+    .trilingual-box { grid-template-columns: 1fr; }
+  }
+  .lang-chip {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 9px;
+    padding: 8px 11px;
+  }
+  .lang-chip.chip-fa {
+    background: #fdf4ff;
+    border-color: #f0abfc;
+  }
+  .lang-chip.chip-en {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+  }
+  .lang-chip.chip-uk {
+    background: #fefce8;
+    border-color: #fde047;
+  }
+  .lang-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #475569;
+    display: block;
+    margin-bottom: 3px;
+  }
+  .lang-val {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #0f172a;
+  }
+  .lang-val.fa {
+    direction: rtl;
+    text-align: right;
+    display: block;
+    font-family: Tahoma, "Segoe UI", sans-serif;
+  }
+
+  .btn-row {
+    margin-top: 13px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+  }
+  button {
+    border: none;
+    border-radius: 10px;
+    padding: 9px 16px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  button:active { transform: translateY(1px); }
+  .btn-blue { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; box-shadow: 0 2px 6px rgba(37,99,235,0.25); }
+  .btn-blue:hover { filter: brightness(1.06); }
+  .btn-teal { background: linear-gradient(135deg, #0d9488, #0f766e); color: #fff; box-shadow: 0 2px 6px rgba(13,148,136,0.25); }
+  .btn-teal:hover { filter: brightness(1.06); }
+  .btn-purple { background: linear-gradient(135deg, #7c3aed, #6d28d9); color: #fff; box-shadow: 0 2px 6px rgba(124,58,237,0.25); }
+  .btn-purple:hover { filter: brightness(1.06); }
+  .btn-gray { background: #e2e8f0; color: #1e293b; }
+  .btn-gray:hover { background: #cbd5e1; }
+
+  .note-small {
+    margin-top: 7px;
+    font-size: 0.8rem;
+    color: #64748b;
+  }
+  .dict-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin-top: 10px;
+  }
+  .status-pill {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #1e3a8a;
+    background: #dbeafe;
+    padding: 5px 11px;
+    border-radius: 8px;
+  }
+
+  .quick-nav{position:sticky;top:8px;z-index:100;display:flex;flex-wrap:wrap;gap:8px;padding:10px;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border:1px solid #dbeafe;border-radius:14px;box-shadow:0 5px 18px rgba(15,23,42,.08)}
+  .quick-nav a{display:inline-block;text-decoration:none;color:#1e3a8a;background:#eff6ff;border:1px solid #bfdbfe;border-radius:9px;padding:8px 12px;font-size:.88rem;font-weight:700}
+  .quick-nav a:hover{background:#dbeafe}.grammar-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin:14px 0}
+  .grammar-panel{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:13px;overflow-x:auto}
+  .grammar-panel h3{margin:0 0 8px;font-size:1rem}.grammar-panel table{width:100%;border-collapse:collapse;font-size:.9rem}
+  .grammar-panel th,.grammar-panel td{padding:7px 8px;text-align:left;border-bottom:1px solid #e2e8f0;white-space:nowrap}
+  .grammar-panel th{background:#eaf1ff}.case-example{background:#fff;border-left:4px solid #0d9488;padding:10px 12px;border-radius:8px;margin:8px 0}
+  .quiz-box{background:#f5f3ff;border:1px solid #ddd6fe;border-radius:12px;padding:14px;margin-top:14px}
+  .quiz-box button{margin:5px 5px 0 0}.quiz-feedback{font-weight:700;margin-top:9px;min-height:24px}
+  html{scroll-behavior:smooth;scroll-padding-top:90px}
+
+
+.dict-word-examples{margin:14px 0;padding:14px 16px;border-left:4px solid #0d9488;background:#f0fdfa;border-radius:12px}
+.dict-word-examples ol{margin:8px 0 0;padding-left:24px}
+.dict-word-examples li{margin:10px 0;line-height:1.55}
+.dict-word-examples .ex-fa{display:block;color:#0f766e;font-size:.94em;margin-top:2px}
+.extra-grammar{margin-top:16px}
+.extra-grammar h3{margin-bottom:8px}
+.extra-grammar p,.extra-grammar li{line-height:1.65}
+.extra-grammar table{width:100%;border-collapse:collapse;margin:8px 0 14px}
+.extra-grammar th,.extra-grammar td{padding:8px;border:1px solid #d8e2ee;text-align:left}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="topbar">
+    <div class="topbar-header">
+      <h1>Deutsch Lern-Assistent (A1 – B1)</h1>
+      <span class="creator-tag">created by Fahim rahimi</span>
+    </div>
+    <p>Verben • Artikel • Wörterbuch • Akkusativ • Dativ</p>
+  </div>
+
+  <nav class="quick-nav" aria-label="Quick navigation">
+    <a href="#verb-section">📘 Verbs</a><a href="#noun-section">🟢 Noun Articles</a><a href="#dict-section">📚 Dictionary</a><a href="#akk-section">🎯 Akkusativ</a><a href="#dat-section">🎯 Dativ</a>
+  </nav>
+
+  <!-- 1. VERB CHECKER (PRÄSENS, PERFEKT & FUTUR I + 3 EXAMPLES + CONJUGATION) -->
+  <section class="card" id="verb-section">
+    <h2><span class="badge-num">1</span> Verb Checker: Präsens, Perfekt, Futur I &amp; Konjugation</h2>
+    <p class="hint">Start typing a German verb. Live online suggestions also help find the correct spelling when you make a typo (internet required). The built-in list contains common irregular verbs; a separate offline rule engine can also form many regular verbs without internet. Irregular forms are not generated by that rule engine:</p>
+
+    <div class="ac-wrap">
+      <input type="text" id="verbInput" autocomplete="off" placeholder="Enter a German verb (e.g. gehen, machen, fahren)..." />
+      <div class="ac-list" id="verbAcList"></div>
+    </div>
+
+    <div class="result-box">
+      <div class="tenses-grid">
+        <!-- PRÄSENS -->
+        <div class="tense-card t-praesens">
+          <span class="tense-title">1. Präsens (زمان حال)</span>
+          <div class="tense-form" id="verbPraesens">—</div>
+          <div class="tense-ex" id="verbExPraesens">Beispiel: —</div>
+        </div>
+        <!-- PERFEKT -->
+        <div class="tense-card t-perfekt">
+          <span class="tense-title">2. Perfekt (گذشته)</span>
+          <div class="tense-form" id="verbPerfekt">—</div>
+          <div class="tense-ex" id="verbExPerfekt">Beispiel: —</div>
+        </div>
+        <!-- FUTUR I -->
+        <div class="tense-card t-futur">
+          <span class="tense-title">3. Futur I (آینده)</span>
+          <div class="tense-form" id="verbFutur">—</div>
+          <div class="tense-ex" id="verbExFutur">Beispiel: —</div>
+        </div>
+      </div>
+
+      <!-- PERSONAL CONJUGATION (ich, du, er/sie/es, wir, ihr, sie/Sie) -->
+      <div class="conj-box">
+        <div class="conj-header">
+          <span>صرف فعل در زمان حال (Konjugation im Präsens)</span>
+          <span id="conjInfLabel" style="color:#64748b; font-size:0.78rem;">—</span>
+        </div>
+        <div class="conj-grid">
+          <div class="conj-cell"><span class="conj-pron">ich</span><span class="conj-verb" id="conjIch">—</span></div>
+          <div class="conj-cell"><span class="conj-pron">du</span><span class="conj-verb" id="conjDu">—</span></div>
+          <div class="conj-cell"><span class="conj-pron">er/sie/es</span><span class="conj-verb" id="conjEr">—</span></div>
+          <div class="conj-cell"><span class="conj-pron">wir</span><span class="conj-verb" id="conjWir">—</span></div>
+          <div class="conj-cell"><span class="conj-pron">ihr</span><span class="conj-verb" id="conjIhr">—</span></div>
+          <div class="conj-cell"><span class="conj-pron">sie/Sie</span><span class="conj-verb" id="conjSie">—</span></div>
+        </div>
+      </div>
+
+      <div class="trilingual-box">
+        <div class="lang-chip chip-fa">
+          <span class="lang-title">🇮🇷 فارسی / دری (Persian / Dari)</span>
+          <span class="lang-val fa" id="verbFa">—</span>
+        </div>
+        <div class="lang-chip chip-en">
+          <span class="lang-title">🇬🇧 English</span>
+          <span class="lang-val" id="verbEn">—</span>
+        </div>
+        <div class="lang-chip chip-uk">
+          <span class="lang-title">🇺🇦 Українська (Ukrainian)</span>
+          <span class="lang-val" id="verbUk">—</span>
+        </div>
+      </div>
+      <div class="note-small" id="verbSourceNote">Offline verb list plus online Wiktionary lookup. Unknown verb forms are not guessed.</div>
+      <div class="note-small" id="verbWikiWrap" hidden><a id="verbWikiLink" target="_blank" rel="noopener noreferrer">Check conjugation in German Wiktionary ↗</a></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-blue" id="speakVerbBtn">🔊 Speak Verb, Conjugation &amp; Examples</button>
+      <button class="btn-gray" id="clearVerbBtn">Clear Verb</button>
+      <button class="btn-blue" id="onlineVerbBtn">🌐 Search online verb</button>
+    </div>
+    <div class="note-small" id="onlineVerbStatus" role="status" aria-live="polite">Online verb lookup searches German Wiktionary and translates the infinitive. Unknown verb forms are never guessed.</div>
+  </section>
+
+  <!-- 2. NOUN ARTICLE CHECKER -->
+  <section class="card card-teal" id="noun-section">
+    <h2><span class="badge-num teal">2</span> Noun Articles: der / die / das</h2>
+    <p class="hint">Start typing a few letters of a German noun. Live online suggestions can help correct spelling; select a result to check its article (internet required). Examples: <strong>Toma</strong> → <em>die Tomate</em>, <strong>Kart</strong> → <em>die Kartoffel</em>, <strong>Fahr</strong> → <em>das Fahrrad</em>):</p>
+
+    <div class="ac-wrap">
+      <input type="text" id="nounInput" autocomplete="off" placeholder="Enter a German noun (e.g. Tomate, Kartoffel, Fahrrad, Tisch)..." />
+      <div class="ac-list" id="nounAcList"></div>
+    </div>
+
+    <div class="result-box">
+      <div class="result-row" id="nounMainDisplay" style="font-size:1.1rem;">—</div>
+      <div class="result-row"><strong>Article + Noun:</strong> <span id="nounArticleText">—</span> &nbsp;|&nbsp; <strong>Plural:</strong> <span id="nounPluralText">—</span></div>
+
+      <div class="trilingual-box">
+        <div class="lang-chip chip-fa">
+          <span class="lang-title">🇮🇷 فارسی / دری (Persian / Dari)</span>
+          <span class="lang-val fa" id="nounFa">—</span>
+        </div>
+        <div class="lang-chip chip-en">
+          <span class="lang-title">🇬🇧 English</span>
+          <span class="lang-val" id="nounEn">—</span>
+        </div>
+        <div class="lang-chip chip-uk">
+          <span class="lang-title">🇺🇦 Українська (Ukrainian)</span>
+          <span class="lang-val" id="nounUk">—</span>
+        </div>
+      </div>
+
+      <div class="case-example" id="nounExampleWrap"><strong>Example sentence:</strong> <span id="nounExample">—</span></div>
+      <div class="note-small" id="nounSourceNote">Offline noun list; use online Wiktionary lookup for additional nouns and verification.</div>
+      <div class="note-small" id="nounWikiWrap" hidden><a id="nounWikiLink" target="_blank" rel="noopener noreferrer">Check noun article and plural in German Wiktionary ↗</a></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-teal" id="speakNounBtn">🔊 Speak Noun + Article</button>
+      <button class="btn-gray" id="clearNounBtn">Clear Noun</button>
+      <button class="btn-teal" id="onlineNounBtn">🌐 Search online noun</button>
+    </div>
+    <div class="note-small" id="onlineNounStatus" role="status" aria-live="polite">Online noun lookup checks German Wiktionary for grammatical gender and plural; uncertain details are left unfilled.</div>
+  </section>
+
+  <!-- 3. 3-LANGUAGE DICTIONARY (DE -> FA / EN / UK) -->
+  <section class="card card-purple" id="dict-section">
+    <h2><span class="badge-num purple">3</span> Dictionary: German → English / Ukrainian / Persian</h2>
+    <p class="hint">Search offline or type a word for live online spelling suggestions. Online results require an internet connection.</p>
+
+    <div class="ac-wrap">
+      <input type="text" id="dictInput" autocomplete="off" placeholder="Search German, English, فارسی, or Українська..." />
+      <div class="ac-list" id="dictAcList"></div>
+    </div>
+
+    <div class="result-box">
+      <div class="result-row"><strong>Deutsch:</strong> <span id="dictDe" style="font-weight:700; color:#1d4ed8;">—</span> <span id="dictExtra" style="color:#475569; font-size:0.88rem;"></span></div>
+      <div class="trilingual-box">
+        <div class="lang-chip chip-fa">
+          <span class="lang-title">🇮🇷 فارسی / دری (Persian / Dari)</span>
+          <span class="lang-val fa" id="dictFa">—</span>
+        </div>
+        <div class="lang-chip chip-en">
+          <span class="lang-title">🇬🇧 English</span>
+          <span class="lang-val" id="dictEn">—</span>
+        </div>
+        <div class="lang-chip chip-uk">
+          <span class="lang-title">🇺🇦 Українська (Ukrainian)</span>
+          <span class="lang-val" id="dictUk">—</span>
+        </div>
+      </div>
+</div>
+
+    <div class="btn-row">
+      <button class="btn-purple" id="speakDictBtn">🔊 Speak German Word</button>
+      <button class="btn-blue" id="onlineDictBtn">🌐 Online translation</button>
+      <button class="btn-gray" id="clearDictBtn">Clear Dictionary</button>
+    </div>
+    <div class="note-small" id="onlineDictStatus" role="status" aria-live="polite">Online dictionary: Google Translate (German → Persian, English, Ukrainian). For noun gender and plural, check the linked German Wiktionary entry.</div>
+    <div class="note-small" id="wiktionaryLinkWrap" hidden><a id="wiktionaryLink" target="_blank" rel="noopener noreferrer">Open this word in German Wiktionary ↗</a></div>
+  </section>
+
+
+
+  <section class="card" id="akk-section">
+    <h2><span class="badge-num">4</span> Akkusativ – Direct Object</h2>
+    <p class="hint">Akkusativ usually marks the person or thing directly affected by the action. Ask: <strong>Wen?</strong> (whom?) or <strong>Was?</strong> (what?)</p>
+    <div class="grammar-grid">
+      <div class="grammar-panel"><h3>Definite Articles</h3><table><tr><th>Nominativ</th><th>Akkusativ</th></tr><tr><td>der Mann</td><td><b>den</b> Mann</td></tr><tr><td>die Frau</td><td><b>die</b> Frau</td></tr><tr><td>das Kind</td><td><b>das</b> Kind</td></tr><tr><td>die Kinder</td><td><b>die</b> Kinder</td></tr></table></div>
+      <div class="grammar-panel"><h3>Indefinite and Negative Articles</h3><table><tr><th>Nominativ</th><th>Akkusativ</th></tr><tr><td>ein Mann</td><td><b>einen</b> Mann</td></tr><tr><td>eine Frau</td><td><b>eine</b> Frau</td></tr><tr><td>ein Kind</td><td><b>ein</b> Kind</td></tr><tr><td>kein Mann</td><td><b>keinen</b> Mann</td></tr></table></div>
+      <div class="grammar-panel"><h3>Pronouns in Akkusativ</h3><table><tr><th>Nominativ</th><th>Akkusativ</th></tr><tr><td>ich</td><td>mich</td></tr><tr><td>du</td><td>dich</td></tr><tr><td>er</td><td>ihn</td></tr><tr><td>sie</td><td>sie</td></tr><tr><td>es</td><td>es</td></tr><tr><td>wir / ihr / sie</td><td>uns / euch / sie</td></tr></table></div>
+    </div>
+    <div class="grammar-panel"><h3>Prepositions with Akkusativ</h3><p><b>durch, für, gegen, ohne, um, bis, entlang</b></p><p>Ich kaufe ein Geschenk <b>für meinen Vater</b>. = I am buying a present for my father.</p><p>Wir gehen <b>ohne den Lehrer</b>. = We are going without the teacher.</p></div>
+    <div class="case-example"><b>Ich sehe den Hund.</b> — I see the dog. (Wen sehe ich? → den Hund)</div>
+    <div class="case-example"><b>Sie hat einen Apfel.</b> — She has an apple.</div>
+    <div class="quiz-box"><b>Akkusativ practice:</b><p>Ich sehe ___ Mann. (der Mann)</p><button class="btn-blue" onclick="checkCaseQuiz('akk','den')">den</button><button class="btn-gray" onclick="checkCaseQuiz('akk','dem')">dem</button><button class="btn-gray" onclick="checkCaseQuiz('akk','der')">der</button><div id="akk-feedback" class="quiz-feedback" aria-live="polite"></div></div>
+
+    <div class="grammar-panel extra-grammar">
+      <h3>More Akkusativ verbs (Verben mit Akkusativ)</h3>
+      <p>These verbs commonly take a direct object in the accusative:</p>
+      <p><b>haben</b> (have): Ich habe <b>einen Bruder</b>. —    .</p>
+      <p><b>brauchen</b> (need): Wir brauchen <b>einen Termin</b>. —       .</p>
+      <p><b>kaufen</b> (buy): Sie kauft <b>einen Mantel</b>. —    .</p>
+      <p><b>finden</b> (find): Ich finde <b>den Schlüssel</b>. —     .</p>
+      <p><b>besuchen</b> (visit): Er besucht <b>seine Eltern</b>. —     .</p>
+      <p><b>fragen</b> (ask): Der Lehrer fragt <b>den Schüler</b>. —     .</p>
+      <p><b>anrufen</b> (call): Ich rufe <b>meine Mutter</b> an. —    .</p>
+      <p><b>essen, trinken, lesen, schreiben, hören, sehen, öffnen, schließen, nehmen, suchen, lieben</b>    Akkusativ .</p>
+    </div>
+    <div class="grammar-panel extra-grammar">
+      <h3>Personal pronouns: all forms together</h3>
+      <table><tr><th>Nominativ</th><th>Akkusativ</th><th>Example</th></tr>
+      <tr><td>ich</td><td><b>mich</b></td><td>Sie sieht mich.</td></tr>
+<tr><td>du</td><td><b>dich</b></td><td>Ich höre dich.</td></tr>
+      <tr><td>er</td><td><b>ihn</b></td><td>Wir kennen ihn.</td></tr>
+      <tr><td>sie</td><td><b>sie</b></td><td>Ich frage sie.</td></tr>
+      <tr><td>es</td><td><b>es</b></td><td>Er kauft es.</td></tr>
+      <tr><td>wir</td><td><b>uns</b></td><td>Sie besucht uns.</td></tr>
+      <tr><td>ihr</td><td><b>euch</b></td><td>Ich sehe euch.</td></tr>
+      <tr><td>sie/Sie</td><td><b>sie/Sie</b></td><td>Ich kenne sie/Sie.</td></tr></table>
+    </div>
+    <div class="grammar-panel extra-grammar">
+      <h3>Two-way prepositions (Wechselpräpositionen)</h3>
+      <p><b>an, auf, hinter, in, neben, über, unter, vor, zwischen</b> can take Akkusativ or Dativ.</p>
+      <ul>
+        <li><b>Wo? (location = Dativ):</b> Das Buch liegt auf <b>dem Tisch</b>. —    .</li>
+        <li><b>Wohin? (direction/change of place = Akkusativ):</b> Ich lege das Buch auf <b>den Tisch</b>. —     .</li>
+        <li>Ich gehe in <b>die Schule</b>. (Wohin? Akkusativ)</li>
+        <li>Ich bin in <b>der Schule</b>. (Wo? Dativ)</li>
+      </ul>
+    </div>
+    <div class="grammar-panel extra-grammar">
+      <h3>Accusative contractions</h3>
+      <table><tr><th>Form</th><th>Example</th></tr>
+      <tr><td>in + das = <b>ins</b></td><td>Wir gehen ins Kino.</td></tr>
+      <tr><td>an + das = <b>ans</b></td><td>Ich gehe ans Fenster.</td></tr>
+      <tr><td>für + das = <b>fürs</b></td><td>Das Geschenk ist fürs Kind.</td></tr></table>
+    </div>
+    <div class="grammar-panel extra-grammar">
+      <h3>Word order with two objects</h3>
+      <p>When a sentence has a Dativ person and an Akkusativ thing, the usual order is often Dativ before Akkusativ:</p>
+      <p>Ich gebe <b>dem Kind</b> (Dativ) <b>den Ball</b> (Akkusativ).</p>
+      <p>With two pronouns, the Akkusativ pronoun often comes before the Dativ pronoun: Ich gebe <b>ihn</b> <b>ihm</b>.</p>
+    </div>
+  </section>
+
+  <section class="card card-teal" id="dat-section">
+    <h2><span class="badge-num teal">5</span> Dativ – Indirect Object</h2>
+    <p class="hint">Dativ usually marks the recipient or the person something is done for or to. Ask: <strong>Wem?</strong> (to whom?)</p>
+    <div class="grammar-grid">
+      <div class="grammar-panel"><h3>Definite Articles</h3><table><tr><th>Nominativ</th><th>Dativ</th></tr><tr><td>der Mann</td><td><b>dem</b> Mann</td></tr><tr><td>die Frau</td><td><b>der</b> Frau</td></tr><tr><td>das Kind</td><td><b>dem</b> Kind</td></tr><tr><td>die Kinder</td><td><b>den</b> Kindern</td></tr></table><p class="note-small">In the dative plural, an -n is usually added to the noun unless the plural already ends in -n or -s.</p></div>
+      <div class="grammar-panel"><h3>Indefinite Articles</h3><table><tr><th>Nominativ</th><th>Dativ</th></tr><tr><td>ein Mann</td><td><b>einem</b> Mann</td></tr><tr><td>eine Frau</td><td><b>einer</b> Frau</td></tr><tr><td>ein Kind</td><td><b>einem</b> Kind</td></tr><tr><td>keine Kinder</td><td><b>keinen</b> Kindern</td></tr></table></div>
+      <div class="grammar-panel"><h3>Pronouns in Dativ</h3><table><tr><th>Nominativ</th><th>Dativ</th></tr><tr><td>ich</td><td>mir</td></tr><tr><td>du</td><td>dir</td></tr><tr><td>er</td><td>ihm</td></tr><tr><td>sie</td><td>ihr</td></tr><tr><td>es</td><td>ihm</td></tr><tr><td>wir / ihr / sie</td><td>uns / euch / ihnen</td></tr></table></div>
+    </div>
+    <div class="grammar-panel"><h3>Prepositions with Dativ</h3><p><b>aus, außer, bei, mit, nach, seit, von, zu, gegenüber</b></p><p>Ich fahre <b>mit dem Bus</b>. = I travel by bus.</p><p>Das Geschenk ist <b>von meiner Mutter</b>. = The gift is from my mother.</p></div>
+    <div class="case-example"><b>Ich helfe dem Mann.</b> — I help the man. (Wem helfe ich? → dem Mann)</div>
+    <div class="case-example"><b>Das Buch gehört meiner Schwester.</b> — The book belongs to my sister.</div>
+    <div class="quiz-box"><b>Dativ practice:</b><p>Ich helfe ___ Frau. (die Frau)</p><button class="btn-blue" onclick="checkCaseQuiz('dat','der')">der</button><button class="btn-gray" onclick="checkCaseQuiz('dat','die')">die</button><button class="btn-gray" onclick="checkCaseQuiz('dat','den')">den</button><div id="dat-feedback" class="quiz-feedback" aria-live="polite"></div></div>
+
+    <div class="grammar-panel extra-grammar">
+      <h3>More Dativ verbs (Verben mit Dativ)</h3>
+      <p>Learn these verbs together with the dative case:</p>
+      <p><b>helfen</b>: Ich helfe <b>meinem Bruder</b>. —    .</p>
+      <p><b>danken</b>: Wir danken <b>der Lehrerin</b>. —    .</p>
+      <p><b>antworten</b>: Er antwortet <b>dem Chef</b>. —     .</p>
+      <p><b>gefallen</b>: Das Kleid gefällt <b>mir</b>. —      .</p>
+      <p><b>gehören</b>: Das Auto gehört <b>meiner Schwester</b>. — /    .</p>
+      <p><b>folgen</b>: Der Hund folgt <b>dem Mann</b>. —    .</p>
+      <p><b>fehlen</b>: Du fehlst <b>mir</b>. —     /     .</p>
+      <p><b>passen</b>: Die Jacke passt <b>mir</b>. —    .</p>
+      <p><b>vertrauen, zuhören, begegnen, gratulieren, empfehlen, widersprechen</b>   Dativ .</p>
+    </div>
+    <div class="grammar-panel extra-grammar">
+      <h3>Dativ personal pronouns</h3>
+      <table><tr><th>Nominativ</th><th>Dativ</th><th>Example</th></tr>
+      <tr><td>ich</td><td><b>mir</b></td><td>Er hilft mir.</td></tr>
+      <tr><td>du</td><td><b>dir</b></td><td>Ich danke dir.</td></tr>
+      <tr><td>er</td><td><b>ihm</b></td><td>Wir antworten ihm.</td></tr>
+      <tr><td>sie</td><td><b>ihr</b></td><td>Das gehört ihr.</td></tr>
+      <tr><td>es</td><td><b>ihm</b></td><td>Das gefällt ihm.</td></tr>
+      <tr><td>wir</td><td><b>uns</b></td><td>Sie hilft uns.</td></tr>
+      <tr><td>ihr</td><td><b>euch</b></td><td>Ich glaube euch.</td></tr>
+      <tr><td>sie/Sie</td><td><b>ihnen/Ihnen</b></td><td>Das gehört ihnen/Ihnen.</td></tr></table>
+    </div>
+    <div class="grammar-panel extra-grammar">
+      <h3>Dativ prepositions: meanings and examples</h3>
+      <table><tr><th>Preposition</th><th>Meaning</th><th>Example</th></tr>
+      <tr><td>aus</td><td> /  </td><td>Ich komme aus dem Iran.</td></tr>
+      <tr><td>bei</td><td> / </td><td>Ich wohne bei meinen Eltern.</td></tr>
+      <tr><td>mit</td><td>Sie fährt mit dem Zug.</td></tr>
+      <tr><td>nach</td><td> (/)</td><td>Wir fahren nach Berlin.</td></tr>
+      <tr><td>seit</td><td>Ich lerne seit einem Jahr Deutsch.</td></tr>
+      <tr><td>von</td><td> /  </td><td>Das Geschenk ist von meiner Tante.</td></tr>
+      <tr><td>zu</td><td> / </td><td>Ich gehe zum Arzt.</td></tr>
+      <tr><td>gegenüber</td><td>Die Bank ist dem Bahnhof gegenüber.</td></tr></table>
+    </div>
+    <div class="grammar-panel extra-grammar">
+      <h3>Dativ plural: the -n rule</h3>
+      <p>In Dativ plural, add <b>-n</b> to the plural noun when possible: die Kinder → mit den Kindern; die Freunde → bei den Freunden. Do not add another -n if the plural already ends in -n or -s: mit den Frauen, mit den Autos.</p>
+    </div>
+    <div class="grammar-panel extra-grammar">
+      <h3>Two objects: Dativ + Akkusativ</h3>
+      <ul>
+        <li>Ich schenke <b>meiner Mutter</b> (Dativ) <b>einen Blumenstrauß</b> (Akkusativ).</li>
+        <li>Der Lehrer erklärt <b>den Schülern</b> (Dativ) <b>die Aufgabe</b> (Akkusativ).</li>
+        <li>Kannst du <b>mir</b> (Dativ) <b>dein Handy</b> (Akkusativ) geben?</li>
+      </ul>
+    </div>
+    <div class="grammar-panel extra-grammar">
+      <h3>Contractions with Dativ</h3>
+      <table><tr><th>Form</th><th>Example</th></tr>
+      <tr><td>bei + dem = <b>beim</b></td><td>Ich bin beim Arzt.</td></tr>
+      <tr><td>von + dem = <b>vom</b></td><td>Ich komme vom Bahnhof.</td></tr>
+      <tr><td>zu + dem = <b>zum</b></td><td>Ich gehe zum Supermarkt.</td></tr>
+      <tr><td>zu + der = <b>zur</b></td><td>Sie geht zur Schule.</td></tr>
+      <tr><td>an + dem = <b>am</b></td><td>Wir treffen uns am Montag.</td></tr>
+      <tr><td>in + dem = <b>im</b></td><td>Er ist im Büro.</td></tr></table>
+    </div>
+  </section>
+
+</div>
+
+<script>
+// =========================================================================
+// VERIFIED GERMAN VERBS DATABASE (Präsens, Perfekt, Futur I + 3 Examples + Conjugation + FA/EN/UK)
+// =========================================================================
+const VERBS_DB = [
+  { inf: "spazieren", praes: "spaziert", perf: "ist spaziert", fut: "wird spazieren", conj: ["spaziere", "spazierst", "spaziert", "spazieren", "spaziert", "spazieren"], exPraes: "Ich gehe jeden Abend spazieren.", exPerf: "Wir sind gestern im Park spazieren gegangen.", exFut: "Morgen werde ich am Strand spazieren.", fa: "قدم زدن / پیاده‌روی کردن", en: "to walk / stroll", uk: "гуляти / прогулюватися" },
+  { inf: "abholen", praes: "holt ab", perf: "hat abgeholt", fut: "wird abholen", conj: ["hole ab", "holst ab", "holt ab", "holen ab", "holt ab", "holen ab"], exPraes: "Ich hole dich um 18 Uhr vom Bahnhof ab.", exPerf: "Ich habe dich gestern vom Bahnhof abgeholt.", exFut: "Ich werde dich morgen vom Bahnhof abholen.", fa: "برداشتن / دنبال کسی رفتن", en: "to pick up / fetch", uk: "забирати / зустрічати" },
+  { inf: "anfangen", praes: "fängt an", perf: "hat angefangen", fut: "wird anfangen", conj: ["fange an", "fängst an", "fängt an", "fangen an", "fangt an", "fangen an"], exPraes: "Der Deutschkurs fängt um 9 Uhr an.", exPerf: "Der Kurs hat schon angefangen.", exFut: "Der Kurs wird gleich anfangen.", fa: "شروع کردن", en: "to start / begin", uk: "починати" },
+  { inf: "ankommen", praes: "kommt an", perf: "ist angekommen", fut: "wird ankommen", conj: ["komme an", "kommst an", "kommt an", "kommen an", "kommt an", "kommen an"], exPraes: "Der Zug kommt pünktlich in Berlin an.", exPerf: "Der Zug ist pünktlich angekommen.", exFut: "Der Zug wird um 14 Uhr ankommen.", fa: "رسیدن", en: "to arrive", uk: "прибувати" },
+  { inf: "anrufen", praes: "ruft an", perf: "hat angerufen", fut: "wird anrufen", conj: ["rufe an", "rufst an", "ruft an", "rufen an", "ruft an", "rufen an"], exPraes: "Ich rufe meine Mutter am Abend an.", exPerf: "Ich habe meine Mutter angerufen.", exFut: "Ich werde dich morgen anrufen.", fa: "تلفن زدن / زنگ زدن", en: "to call (phone)", uk: "телефонувати" },
+  { inf: "antworten", praes: "antwortet", perf: "hat geantwortet", fut: "wird antworten", conj: ["antworte", "antwortest", "antwortet", "antworten", "antwortet", "antworten"], exPraes: "Er antwortet schnell auf meine Nachricht.", exPerf: "Er hat schnell geantwortet.", exFut: "Er wird bald antworten.", fa: "پاسخ دادن / جواب دادن", en: "to answer / reply", uk: "відповідати" },
+  { inf: "arbeiten", praes: "arbeitet", perf: "hat gearbeitet", fut: "wird arbeiten", conj: ["arbeite", "arbeitest", "arbeitet", "arbeiten", "arbeitet", "arbeiten"], exPraes: "Sie arbeitet von Montag bis Freitag im Büro.", exPerf: "Sie hat gestern lange gearbeitet.", exFut: "Sie wird nächste Woche in Kiel arbeiten.", fa: "کار کردن", en: "to work", uk: "працювати" },
+  { inf: "aufstehen", praes: "steht auf", perf: "ist aufgestanden", fut: "wird aufstehen", conj: ["stehe auf", "stehst auf", "steht auf", "stehen auf", "steht auf", "stehen auf"], exPraes: "Ich stehe jeden Morgen um 7 Uhr auf.", exPerf: "Ich bin heute früh aufgestanden.", exFut: "Morgen werde ich um 6 Uhr aufstehen.", fa: "بیدار شدن / برخاستن", en: "to get up / wake up", uk: "вставати / прокидатися" },
+  { inf: "ausfüllen", praes: "füllt aus", perf: "hat ausgefüllt", fut: "wird ausfüllen", conj: ["fülle aus", "füllst aus", "füllt aus", "füllen aus", "füllt aus", "füllen aus"], exPraes: "Bitte füllen Sie dieses Formular aus.", exPerf: "Ich habe das Formular ausgefüllt.", exFut: "Ich werde den Antrag morgen ausfüllen.", fa: "پر کردن (فرم)", en: "to fill out (form)", uk: "заповнювати (анкету)" },
+  { inf: "aussteigen", praes: "steigt aus", perf: "ist ausgestiegen", fut: "wird aussteigen", conj: ["steige aus", "steigst aus", "steigt aus", "steigen aus", "steigt aus", "steigen aus"], exPraes: "Wir steigen an der nächsten Haltestelle aus.", exPerf: "Wir sind am Hauptbahnhof ausgestiegen.", exFut: "Wir werden dort aussteigen.", fa: "پیاده شدن", en: "to get off / exit", uk: "виходити (з транспорту)" },
+  { inf: "backen", praes: "bäckt / backt", perf: "hat gebacken", fut: "wird backen", conj: ["backe", "bäckst", "bäckt", "backen", "backt", "backen"], exPraes: "Meine Oma backt am Wochenende einen Kuchen.", exPerf: "Sie hat einen leckeren Kuchen gebacken.", exFut: "Morgen werde ich frisches Brot backen.", fa: "پختن (نان و کیک)", en: "to bake", uk: "пекти" },
+  { inf: "beginnen", praes: "beginnt", perf: "hat begonnen", fut: "wird beginnen", conj: ["beginne", "beginnst", "beginnt", "beginnen", "beginnt", "beginnen"], exPraes: "Der Film beginnt gleich.", exPerf: "Der Film hat um 20 Uhr begonnen.", exFut: "Die Prüfung wird pünktlich beginnen.", fa: "آغاز کردن / شروع کردن", en: "to begin", uk: "починати" },
+  { inf: "bekommen", praes: "bekommt", perf: "hat bekommen", fut: "wird bekommen", conj: ["bekomme", "bekommst", "bekommt", "bekommen", "bekommt", "bekommen"], exPraes: "Ich bekomme oft Briefe aus der Heimat.", exPerf: "Ich habe gestern ein Geschenk bekommen.", exFut: "Du wirst morgen eine Antwort bekommen.", fa: "دریافت کردن / گرفتن", en: "to receive / get", uk: "отримувати" },
+  { inf: "bestellen", praes: "bestellt", perf: "hat bestellt", fut: "wird bestellen", conj: ["bestelle", "bestellst", "bestellt", "bestellen", "bestellt", "bestellen"], exPraes: "Wir bestellen eine Pizza und einen Salat.", exPerf: "Wir haben das Essen schon bestellt.", exFut: "Ich werde das Buch online bestellen.", fa: "سفارش دادن", en: "to order", uk: "замовляти" },
+  { inf: "besuchen", praes: "besucht", perf: "hat besucht", fut: "wird besuchen", conj: ["besuche", "besuchst", "besucht", "besuchen", "besucht", "besuchen"], exPraes: "Am Sonntag besuchen wir unsere Freunde.", exPerf: "Wir haben unsere Freunde besucht.", exFut: "Im Sommer werde ich meine Familie besuchen.", fa: "ملاقات کردن / دیدن کردن", en: "to visit", uk: "відвідувати" },
+  { inf: "bezahlen", praes: "bezahlt", perf: "hat bezahlt", fut: "wird bezahlen", conj: ["bezahle", "bezahlst", "bezahlt", "bezahlen", "bezahlt", "bezahlen"], exPraes: "Ich bezahle die Rechnung mit Karte.", exPerf: "Ich habe schon bezahlt.", exFut: "Er wird das Ticket morgen bezahlen.", fa: "پرداخت کردن / پول دادن", en: "to pay", uk: "платити / оплачувати" },
+  { inf: "bleiben", praes: "bleibt", perf: "ist geblieben", fut: "wird bleiben", conj: ["bleibe", "bleibst", "bleibt", "bleiben", "bleibt", "bleiben"], exPraes: "Heute bleibe ich zu Hause.", exPerf: "Ich bin gestern zu Hause geblieben.", exFut: "Wir werden drei Tage in Hamburg bleiben.", fa: "ماندن / باقی ماندن", en: "to stay / remain", uk: "залишатися" },
+  { inf: "brauchen", praes: "braucht", perf: "hat gebraucht", fut: "wird brauchen", conj: ["brauche", "brauchst", "braucht", "brauchen", "braucht", "brauchen"], exPraes: "Ich brauche Hilfe bei den Hausaufgaben.", exPerf: "Er hat viel Zeit gebraucht.", exFut: "Wir werden ein neues Fahrrad brauchen.", fa: "نیاز داشتن / ضرورت داشتن", en: "to need", uk: "потребувати" },
+  { inf: "bringen", praes: "bringt", perf: "hat gebracht", fut: "wird bringen", conj: ["bringe", "bringst", "bringt", "bringen", "bringt", "bringen"], exPraes: "Ich bringe dir ein Glas Wasser.", exPerf: "Er hat mir ein Buch gebracht.", exFut: "Ich werde morgen Kuchen mitbringen.", fa: "آوردن", en: "to bring", uk: "приносити" },
+  { inf: "danken", praes: "dankt", perf: "hat gedankt", fut: "wird danken", conj: ["danke", "dankst", "dankt", "danken", "dankt", "danken"], exPraes: "Ich danke Ihnen herzlich für Ihre Hilfe.", exPerf: "Er hat mir für das Geschenk gedankt.", exFut: "Wir werden ihm persönlich danken.", fa: "تشکر کردن", en: "to thank", uk: "дякувати" },
+  { inf: "denken", praes: "denkt", perf: "hat gedacht", fut: "wird denken", conj: ["denke", "denkst", "denkt", "denken", "denkt", "denken"], exPraes: "Ich denke oft an meine Familie.", exPerf: "Ich habe an dich gedacht.", exFut: "Ich werde immer an diese Zeit denken.", fa: "فکر کردن", en: "to think", uk: "думати" },
+  { inf: "dürfen", praes: "darf", perf: "hat gedurft", fut: "wird dürfen", conj: ["darf", "darfst", "darf", "dürfen", "dürft", "dürfen"], exPraes: "Hier darf man nicht parken.", exPerf: "Wir haben früher gehen dürfen.", exFut: "Bald wirst du Auto fahren dürfen.", fa: "اجازه داشتن", en: "may / to be allowed to", uk: "мати дозвіл / могти" },
+  { inf: "einkaufen", praes: "kauft ein", perf: "hat eingekauft", fut: "wird einkaufen", conj: ["kaufe ein", "kaufst ein", "kauft ein", "kaufen ein", "kauft ein", "kaufen ein"], exPraes: "Wir kaufen heute im Supermarkt ein.", exPerf: "Ich habe Gemüse und Obst eingekauft.", exFut: "Morgen werde ich für das Wochenende einkaufen.", fa: "خرید کردن / سودا خریدن", en: "to shop / buy groceries", uk: "робити покупки" },
+  { inf: "einladen", praes: "lädt ein", perf: "hat eingeladen", fut: "wird einladen", conj: ["lade ein", "lädst ein", "lädt ein", "laden ein", "ladet ein", "laden ein"], exPraes: "Ich lade dich zu meinem Geburtstag ein.", exPerf: "Sie hat uns zum Essen eingeladen.", exFut: "Wir werden alle Freunde einladen.", fa: "دعوت کردن", en: "to invite", uk: "запрошувати" },
+  { inf: "einsteigen", praes: "steigt ein", perf: "ist eingestiegen", fut: "wird einsteigen", conj: ["steige ein", "steigst ein", "steigt ein", "steigen ein", "steigt ein", "steigen ein"], exPraes: "Bitte steigen Sie schnell in den Bus ein!", exPerf: "Wir sind in den Zug eingestiegen.", exFut: "Wir werden am Bahnhof einsteigen.", fa: "سوار شدن", en: "to get in / board", uk: "сідати (в транспорт)" },
+  { inf: "empfehlen", praes: "empfiehlt", perf: "hat empfohlen", fut: "wird empfehlen", conj: ["empfehle", "empfiehlst", "empfiehlt", "empfehlen", "empfehlt", "empfehlen"], exPraes: "Ich empfehle dieses Restaurant.", exPerf: "Der Arzt hat mir Ruhe empfohlen.", exFut: "Er wird uns ein gutes Buch empfehlen.", fa: "توصیه کردن / پیشنهاد دادن", en: "to recommend", uk: "рекомендувати" },
+  { inf: "entschuldigen", praes: "entschuldigt", perf: "hat entschuldigt", fut: "wird entschuldigen", conj: ["entschuldige", "entschuldigst", "entschuldigt", "entschuldigen", "entschuldigt", "entschuldigen"], exPraes: "Ich entschuldige mich für die Verspätung.", exPerf: "Er hat sich höflich entschuldigt.", exFut: "Sie wird sich bestimmt entschuldigen.", fa: "عذرخواهی کردن / بخشیدن", en: "to apologize / excuse", uk: "вибачатися" },
+  { inf: "erklären", praes: "erklärt", perf: "hat erklärt", fut: "wird erklären", conj: ["erkläre", "erklärst", "erklärt", "erklären", "erklärt", "erklären"], exPraes: "Die Lehrerin erklärt die Grammatik sehr gut.", exPerf: "Sie hat uns das Wort erklärt.", exFut: "Der Lehrer wird die Aufgabe morgen erklären.", fa: "توضیح دادن / تشریح کردن", en: "to explain", uk: "пояснювати" },
+  { inf: "erzählen", praes: "erzählt", perf: "hat erzählt", fut: "wird erzählen", conj: ["erzähle", "erzählst", "erzählt", "erzählen", "erzählt", "erzählen"], exPraes: "Er erzählt eine interessante Geschichte.", exPerf: "Sie hat viel von ihrer Reise erzählt.", exFut: "Ich werde dir alles genau erzählen.", fa: "قصه کردن / تعریف کردن", en: "to tell / narrate", uk: "розповідати" },
+  { inf: "essen", praes: "isst", perf: "hat gegessen", fut: "wird essen", conj: ["esse", "isst", "isst", "essen", "esst", "essen"], exPraes: "Wir essen um 13 Uhr zu Mittag.", exPerf: "Ich habe heute Brot mit Käse gegessen.", exFut: "Heute Abend werden wir zusammen essen.", fa: "خوردن / نان خوردن", en: "to eat", uk: "їсти" },
+  { inf: "fahren", praes: "fährt", perf: "ist gefahren", fut: "wird fahren", conj: ["fahre", "fährst", "fährt", "fahren", "fahrt", "fahren"], exPraes: "Ich fahre jeden Tag mit dem Fahrrad zur Arbeit.", exPerf: "Wir sind gestern nach Hamburg gefahren.", exFut: "Nächste Woche werde ich nach Berlin fahren.", fa: "راندن / رفتن (با وسیله)", en: "to drive / ride / go", uk: "їхати / керувати" },
+  { inf: "fallen", praes: "fällt", perf: "ist gefallen", fut: "wird fallen", conj: ["falle", "fällst", "fällt", "fallen", "fallt", "fallen"], exPraes: "Im Herbst fallen die Blätter von den Bäumen.", exPerf: "Das Glas ist auf den Boden gefallen.", exFut: "Im Winter wird viel Schnee fallen.", fa: "افتادن", en: "to fall", uk: "падати" },
+  { inf: "fernsehen", praes: "sieht fern", perf: "hat ferngesehen", fut: "wird fernsehen", conj: ["sehe fern", "siehst fern", "sieht fern", "sehen fern", "seht fern", "sehen fern"], exPraes: "Abends sieht mein Vater gern fern.", exPerf: "Wir haben gestern zusammen ferngesehen.", exFut: "Heute Abend werde ich nicht fernsehen.", fa: "تلویزیون دیدن", en: "to watch TV", uk: "дивитися телевізор" },
+  { inf: "finden", praes: "findet", perf: "hat gefunden", fut: "wird finden", conj: ["finde", "findest", "findet", "finden", "findet", "finden"], exPraes: "Ich finde das Buch sehr interessant.", exPerf: "Ich habe meinen Schlüssel gefunden!", exFut: "Du wirst bestimmt eine gute Arbeit finden.", fa: "پیدا کردن / یافتن", en: "to find", uk: "знаходити" },
+  { inf: "fliegen", praes: "fliegt", perf: "ist geflogen", fut: "wird fliegen", conj: ["fliege", "fliegst", "fliegt", "fliegen", "fliegt", "fliegen"], exPraes: "Im Sommer fliegen wir nach Spanien.", exPerf: "Er ist nach München geflogen.", exFut: "Nächstes Jahr werde ich nach Kabul fliegen.", fa: "پرواز کردن", en: "to fly", uk: "летіти" },
+  { inf: "fragen", praes: "fragt", perf: "hat gefragt", fut: "wird fragen", conj: ["frage", "fragst", "fragt", "fragen", "fragt", "fragen"], exPraes: "Der Schüler fragt den Lehrer.", exPerf: "Der Tourist hat nach dem Weg gefragt.", exFut: "Ich werde morgen im Büro fragen.", fa: "پرسیدن / سوال کردن", en: "to ask", uk: "питати" },
+  { inf: "frühstücken", praes: "frühstückt", perf: "hat gefrühstückt", fut: "wird frühstücken", conj: ["frühstücke", "frühstückst", "frühstückt", "frühstücken", "frühstückt", "frühstücken"], exPraes: "Wir frühstücken zusammen um 8 Uhr.", exPerf: "Hast du heute schon gefrühstückt?", exFut: "Morgen werden wir im Café frühstücken.", fa: "صبحانه خوردن / ناشتا خوردن", en: "to have breakfast", uk: "снідати" },
+  { inf: "geben", praes: "gibt", perf: "hat gegeben", fut: "wird geben", conj: ["gebe", "gibst", "gibt", "geben", "gebt", "geben"], exPraes: "Er gibt mir das Buch.", exPerf: "Er hat mir seine Telefonnummer gegeben.", exFut: "Ich werde dir morgen das Geld geben.", fa: "دادن", en: "to give", uk: "давати" },
+  { inf: "gefallen", praes: "gefällt", perf: "hat gefallen", fut: "wird gefallen", conj: ["gefalle", "gefällst", "gefällt", "gefallen", "gefallt", "gefallen"], exPraes: "Dein neues Fahrrad gefällt mir sehr gut.", exPerf: "Der Film hat uns gut gefallen.", exFut: "Die Stadt wird dir bestimmt gefallen.", fa: "خوش آمدن / پسندیدن", en: "to please / like", uk: "подобатися" },
+  { inf: "gehen", praes: "geht", perf: "ist gegangen", fut: "wird gehen", conj: ["gehe", "gehst", "geht", "gehen", "geht", "gehen"], exPraes: "Ich gehe heute zu Fuß in die Stadt.", exPerf: "Sie ist schon nach Hause gegangen.", exFut: "Morgen werde ich zum Arzt gehen.", fa: "رفتن / پیاده رفتن", en: "to go / walk", uk: "йти / ходити" },
+  { inf: "gewinnen", praes: "gewinnt", perf: "hat gewonnen", fut: "wird gewinnen", conj: ["gewinne", "gewinnst", "gewinnt", "gewinnen", "gewinnt", "gewinnen"], exPraes: "Unsere Mannschaft gewinnt das Spiel.", exPerf: "Er hat den ersten Preis gewonnen.", exFut: "Wir werden das Spiel gewinnen.", fa: "برنده شدن / بردن", en: "to win", uk: "вигравати / перемагати" },
+  { inf: "glauben", praes: "glaubt", perf: "hat geglaubt", fut: "wird glauben", conj: ["glaube", "glaubst", "glaubt", "glauben", "glaubt", "glauben"], exPraes: "Ich glaube, dass es morgen regnet.", exPerf: "Niemand hat ihm geglaubt.", exFut: "Er wird dir sicher glauben.", fa: "باور کردن / فکر کردن", en: "to believe / think", uk: "вірити / вважати" },
+  { inf: "haben", praes: "hat", perf: "hat gehabt", fut: "wird haben", conj: ["habe", "hast", "hat", "haben", "habt", "haben"], exPraes: "Ich habe heute viel Zeit.", exPerf: "Wir haben gestern Glück gehabt.", exFut: "Morgen werde ich einen Termin haben.", fa: "داشتن", en: "to have", uk: "мати" },
+  { inf: "heißen", praes: "heißt", perf: "hat geheißen", fut: "wird heißen", conj: ["heiße", "heißt", "heißt", "heißen", "heißt", "heißen"], exPraes: "Ich heiße Fahim und lerne Deutsch.", exPerf: "Wie hat der Film geheißen?", exFut: "Wie wird das neue Projekt heißen?", fa: "نامیده شدن / نام داشتن", en: "to be called / named", uk: "зватися / називатися" },
+  { inf: "helfen", praes: "hilft", perf: "hat geholfen", fut: "wird helfen", conj: ["helfe", "hilfst", "hilft", "helfen", "helft", "helfen"], exPraes: "Er hilft seiner Schwester bei den Hausaufgaben.", exPerf: "Er hat mir sehr geholfen.", exFut: "Ich werde dir gern helfen.", fa: "کمک کردن / یاری دادن", en: "to help", uk: "допомагати" },
+  { inf: "hören", praes: "hört", perf: "hat gehört", fut: "wird hören", conj: ["höre", "hörst", "hört", "hören", "hört", "hören"], exPraes: "Ich höre gern Musik beim Lernen.", exPerf: "Hast du die Nachrichten gehört?", exFut: "Wir werden bald voneinander hören.", fa: "شنیدن / گوش دادن", en: "to hear / listen", uk: "чути / слухати" },
+  { inf: "kaufen", praes: "kauft", perf: "hat gekauft", fut: "wird kaufen", conj: ["kaufe", "kaufst", "kauft", "kaufen", "kauft", "kaufen"], exPraes: "Ich kaufe Tomaten und Kartoffeln.", exPerf: "Er hat gestern ein Auto gekauft.", exFut: "Morgen werde ich frisches Obst kaufen.", fa: "خریدن", en: "to buy", uk: "купувати" },
+  { inf: "kennen", praes: "kennt", perf: "hat gekannt", fut: "wird kennen", conj: ["kenne", "kennst", "kennt", "kennen", "kennt", "kennen"], exPraes: "Ich kenne diese Stadt sehr gut.", exPerf: "Ich habe ihn früher nicht gekannt.", exFut: "Bald wirst du alle Kollegen kennen.", fa: "شناختن", en: "to know (person/place)", uk: "знати" },
+  { inf: "kochen", praes: "kocht", perf: "hat gekocht", fut: "wird kochen", conj: ["koche", "kochst", "kocht", "kochen", "kocht", "kochen"], exPraes: "Heute koche ich Reis mit Gemüse.", exPerf: "Mein Vater hat eine Suppe gekocht.", exFut: "Am Sonntag werde ich ein schönes Essen kochen.", fa: "آشپزی کردن / پختن", en: "to cook", uk: "готувати їжу" },
+  { inf: "kommen", praes: "kommt", perf: "ist gekommen", fut: "wird kommen", conj: ["komme", "kommst", "kommt", "kommen", "kommt", "kommen"], exPraes: "Er kommt aus Kiel und geht zur Schule.", exPerf: "Sie ist pünktlich gekommen.", exFut: "Wann wirst du morgen zu mir kommen?", fa: "آمدن", en: "to come", uk: "приходити / приїжджати" },
+  { inf: "können", praes: "kann", perf: "hat gekonnt", fut: "wird können", conj: ["kann", "kannst", "kann", "können", "könnt", "können"], exPraes: "Ich kann schon ein bisschen Deutsch sprechen.", exPerf: "Er hat nicht kommen können.", exFut: "Bald wirst du fließend Deutsch sprechen können.", fa: "توانستن", en: "can / to be able to", uk: "могти / вміти" },
+  { inf: "kosten", praes: "kostet", perf: "hat gekostet", fut: "wird kosten", conj: ["koste", "kostest", "kostet", "kosten", "kostet", "kosten"], exPraes: "Das Buch kostet zwölf Euro.", exPerf: "Das Ticket hat 15 Euro gekostet.", exFut: "Die Reparatur wird nicht viel kosten.", fa: "قیمت داشتن / ارزیدن", en: "to cost", uk: "коштувати" },
+  { inf: "lachen", praes: "lacht", perf: "hat gelacht", fut: "wird lachen", conj: ["lache", "lachst", "lacht", "lachen", "lacht", "lachen"], exPraes: "Die Kinder lachen über den Witz.", exPerf: "Wir haben viel zusammen gelacht.", exFut: "Alle werden über diese Geschichte lachen.", fa: "خندیدن", en: "to laugh", uk: "сміятися" },
+  { inf: "laufen", praes: "läuft", perf: "ist gelaufen", fut: "wird laufen", conj: ["laufe", "läufst", "läuft", "laufen", "lauft", "laufen"], exPraes: "Er läuft jeden Morgen im Park.", exPerf: "Sie ist schnell nach Hause gelaufen.", exFut: "Morgen werde ich fünf Kilometer laufen.", fa: "دویدن / قدم زدن", en: "to run / walk", uk: "бігати / ходити" },
+  { inf: "leben", praes: "lebt", perf: "hat gelebt", fut: "wird leben", conj: ["lebe", "lebst", "lebt", "leben", "lebt", "leben"], exPraes: "Wir leben jetzt in Deutschland.", exPerf: "Er hat drei Jahre in Kiel gelebt.", exFut: "Sie werden glücklich zusammen leben.", fa: "زندگی کردن", en: "to live", uk: "жити" },
+  { inf: "lernen", praes: "lernt", perf: "hat gelernt", fut: "wird lernen", conj: ["lerne", "lernst", "lernt", "lernen", "lernt", "lernen"], exPraes: "Ich lerne jeden Tag neue deutsche Wörter.", exPerf: "Wir haben viel für die Prüfung gelernt.", exFut: "Ich werde nächstes Jahr B1 lernen.", fa: "یاد گرفتن / آموختن", en: "to learn / study", uk: "вчити / навчатися" },
+  { inf: "lesen", praes: "liest", perf: "hat gelesen", fut: "wird lesen", conj: ["lese", "liest", "liest", "lesen", "lest", "lesen"], exPraes: "Abends liest er ein Buch im Bett.", exPerf: "Ich habe die Zeitung schon gelesen.", exFut: "Am Wochenende werde ich diesen Roman lesen.", fa: "خواندن / مطالعه کردن", en: "to read", uk: "читати" },
+  { inf: "machen", praes: "macht", perf: "hat gemacht", fut: "wird machen", conj: ["mache", "machst", "macht", "machen", "macht", "machen"], exPraes: "Was machst du am Wochenende?", exPerf: "Ich habe meine Hausaufgaben gemacht.", exFut: "Ich werde morgen einen Ausflug machen.", fa: "انجام دادن / ساختن", en: "to do / make", uk: "робити" },
+  { inf: "nehmen", praes: "nimmt", perf: "hat genommen", fut: "wird nehmen", conj: ["nehme", "nimmst", "nimmt", "nehmen", "nehmt", "nehmen"], exPraes: "Ich nehme den Bus um 8 Uhr.", exPerf: "Er hat eine Tablette genommen.", exFut: "Wir werden morgen den Zug nehmen.", fa: "گرفتن / برداشتن", en: "to take", uk: "брати" },
+  { inf: "öffnen", praes: "öffnet", perf: "hat geöffnet", fut: "wird öffnen", conj: ["öffne", "öffnest", "öffnet", "öffnen", "öffnet", "öffnen"], exPraes: "Der Supermarkt öffnet um 7 Uhr.", exPerf: "Er hat das Fenster geöffnet.", exFut: "Die Bank wird um 9 Uhr öffnen.", fa: "باز کردن", en: "to open", uk: "відкривати" },
+  { inf: "regnen", praes: "regnet", perf: "hat geregnet", fut: "wird regnen", conj: ["regne", "regnest", "regnet", "regnen", "regnet", "regnen"], exPraes: "Heute regnet es in Kiel.", exPerf: "Gestern hat es stark geregnet.", exFut: "Laut Wetterbericht wird es morgen regnen.", fa: "باریدن (باران)", en: "to rain", uk: "йти (про дощ)" },
+  { inf: "reisen", praes: "reist", perf: "ist gereist", fut: "wird reisen", conj: ["reise", "reist", "reist", "reisen", "reist", "reisen"], exPraes: "Wir reisen gern mit dem Zug.", exPerf: "Sie ist durch ganz Europa gereist.", exFut: "Im Sommer werden wir ans Meer reisen.", fa: "سفر کردن / مسافرت کردن", en: "to travel", uk: "подорожувати" },
+  { inf: "sagen", praes: "sagt", perf: "hat gesagt", fut: "wird sagen", conj: ["sage", "sagst", "sagt", "sagen", "sagt", "sagen"], exPraes: "Was sagt der Lehrer?", exPerf: "Er hat mir die Wahrheit gesagt.", exFut: "Ich werde dir morgen Bescheid sagen.", fa: "گفتن", en: "to say / tell", uk: "казати / говорити" },
+  { inf: "schlafen", praes: "schläft", perf: "hat geschlafen", fut: "wird schlafen", conj: ["schlafe", "schläfst", "schläft", "schlafen", "schlaft", "schlafen"], exPraes: "Das Baby schläft ruhig im Bett.", exPerf: "Ich habe heute Nacht acht Stunden geschlafen.", exFut: "Heute Abend werde ich früh schlafen.", fa: "خوابیدن", en: "to sleep", uk: "спати" },
+  { inf: "schließen", praes: "schließt", perf: "hat geschlossen", fut: "wird schließen", conj: ["schließe", "schließt", "schließt", "schließen", "schließt", "schließen"], exPraes: "Das Geschäft schließt um 20 Uhr.", exPerf: "Die Bank hat schon geschlossen.", exFut: "Ich werde gleich die Tür schließen.", fa: "بستن", en: "to close", uk: "закривати" },
+  { inf: "schreiben", praes: "schreibt", perf: "hat geschrieben", fut: "wird schreiben", conj: ["schreibe", "schreibst", "schreibt", "schreiben", "schreibt", "schreiben"], exPraes: "Ich schreibe eine E-Mail an meinen Freund.", exPerf: "Sie hat einen langen Brief geschrieben.", exFut: "Morgen werde ich die Prüfung schreiben.", fa: "نوشتن", en: "to write", uk: "писати" },
+  { inf: "schwimmen", praes: "schwimmt", perf: "ist geschwommen", fut: "wird schwimmen", conj: ["schwimme", "schwimmst", "schwimmt", "schwimmen", "schwimmt", "schwimmen"], exPraes: "Im Sommer schwimmen wir im Meer.", exPerf: "Er ist eine Stunde geschwommen.", exFut: "Am Samstag werden wir im Schwimmbad schwimmen.", fa: "شنا کردن / آب‌بازی کردن", en: "to swim", uk: "плавати" },
+  { inf: "sehen", praes: "sieht", perf: "hat gesehen", fut: "wird sehen", conj: ["sehe", "siehst", "sieht", "sehen", "seht", "sehen"], exPraes: "Ich sehe einen Vogel im Garten.", exPerf: "Hast du meinen Bruder gesehen?", exFut: "Wir werden uns morgen wiedersehen.", fa: "دیدن", en: "to see", uk: "бачити" },
+  { inf: "sein", praes: "ist", perf: "ist gewesen", fut: "wird sein", conj: ["bin", "bist", "ist", "sind", "seid", "sind"], exPraes: "Heute ist das Wetter wunderbar.", exPerf: "Wir sind gestern im Kino gewesen.", exFut: "Morgen wird alles besser sein.", fa: "بودن", en: "to be", uk: "бути" },
+  { inf: "singen", praes: "singt", perf: "hat gesungen", fut: "wird singen", conj: ["singe", "singst", "singt", "singen", "singt", "singen"], exPraes: "Die Kinder singen ein deutsches Lied.", exPerf: "Sie hat sehr schön gesungen.", exFut: "Auf dem Fest werden alle zusammen singen.", fa: "آواز خواندن / سرودن", en: "to sing", uk: "співати" },
+  { inf: "sitzen", praes: "sitzt", perf: "hat gesessen", fut: "wird sitzen", conj: ["sitze", "sitzt", "sitzt", "sitzen", "sitzt", "sitzen"], exPraes: "Wir sitzen zusammen am Tisch.", exPerf: "Er hat lange im Wartezimmer gesessen.", exFut: "Wir werden im Zug nebeneinander sitzen.", fa: "نشستن", en: "to sit", uk: "сидіти" },
+  { inf: "spielen", praes: "spielt", perf: "hat gespielt", fut: "wird spielen", conj: ["spiele", "spielst", "spielt", "spielen", "spielt", "spielen"], exPraes: "Die Kinder spielen Fußball im Park.", exPerf: "Wir haben gestern Karten gespielt.", exFut: "Am Nachmittag werden wir zusammen spielen.", fa: "بازی کردن / نواختن", en: "to play", uk: "грати" },
+  { inf: "sprechen", praes: "spricht", perf: "hat gesprochen", fut: "wird sprechen", conj: ["spreche", "sprichst", "spricht", "sprechen", "sprecht", "sprechen"], exPraes: "Er spricht Deutsch und Englisch.", exPerf: "Ich habe mit dem Chef gesprochen.", exFut: "Morgen werde ich mit dem Lehrer sprechen.", fa: "صحبت کردن / گپ زدن", en: "to speak / talk", uk: "говорити / розмовляти" },
+  { inf: "studieren", praes: "studiert", perf: "hat studiert", fut: "wird studieren", conj: ["studiere", "studierst", "studiert", "studieren", "studiert", "studieren"], exPraes: "Mein Bruder studiert Medizin an der Universität.", exPerf: "Sie hat in Berlin studiert.", exFut: "Nach dem Sprachkurs werde ich Informatik studieren.", fa: "تحصیل کردن (دانشگاه)", en: "to study (at university)", uk: "навчатися (в університеті)" },
+  { inf: "suchen", praes: "sucht", perf: "hat gesucht", fut: "wird suchen", conj: ["suche", "suchst", "sucht", "suchen", "sucht", "suchen"], exPraes: "Ich suche eine günstige Wohnung.", exPerf: "Wir haben lange nach dem Weg gesucht.", exFut: "Ich werde eine neue Arbeit suchen.", fa: "جستجو کردن / پالیدن", en: "to search / look for", uk: "шукати" },
+  { inf: "tanzen", praes: "tanzt", perf: "hat getanzt", fut: "wird tanzen", conj: ["tanze", "tanzt", "tanzt", "tanzen", "tanzt", "tanzen"], exPraes: "Auf der Party tanzen alle zusammen.", exPerf: "Wir haben die ganze Nacht getanzt.", exFut: "Auf der Party werden wir viel tanzen.", fa: "رقصیدن", en: "to dance", uk: "танцювати" },
+  { inf: "tragen", praes: "trägt", perf: "hat getragen", fut: "wird tragen", conj: ["trage", "trägst", "trägt", "tragen", "tragt", "tragen"], exPraes: "Heute trägt sie einen warmen Mantel.", exPerf: "Er hat den schweren Koffer getragen.", exFut: "Ich werde die Tasche für dich tragen.", fa: "حمل کردن / پوشیدن", en: "to carry / wear", uk: "нести / носити (одяг)" },
+  { inf: "treffen", praes: "trifft", perf: "hat getroffen", fut: "wird treffen", conj: ["treffe", "triffst", "trifft", "treffen", "trefft", "treffen"], exPraes: "Ich treffe meine Freundin im Café.", exPerf: "Wir haben uns gestern getroffen.", exFut: "Am Samstag werde ich meine Freunde treffen.", fa: "ملاقات کردن / دیدن", en: "to meet", uk: "зустрічати" },
+  { inf: "trinken", praes: "trinkt", perf: "hat getrunken", fut: "wird trinken", conj: ["trinke", "trinkst", "trinkt", "trinken", "trinkt", "trinken"], exPraes: "Morgens trinke ich immer eine Tasse Kaffee.", exPerf: "Hast du genug Wasser getrunken?", exFut: "Nach dem Essen werden wir Tee trinken.", fa: "نوشیدن / چای خوردن", en: "to drink", uk: "пити" },
+  { inf: "vergessen", praes: "vergisst", perf: "hat vergessen", fut: "wird vergessen", conj: ["vergesse", "vergisst", "vergisst", "vergessen", "vergesst", "vergessen"], exPraes: "Er vergisst oft seinen Regenschirm.", exPerf: "Ich habe mein Handy zu Hause vergessen.", exFut: "Ich werde diesen Tag nie vergessen.", fa: "فراموش کردن / یاد رفتن", en: "to forget", uk: "забувати" },
+  { inf: "verkaufen", praes: "verkauft", perf: "hat verkauft", fut: "wird verkaufen", conj: ["verkaufe", "verkaufst", "verkauft", "verkaufen", "verkauft", "verkaufen"], exPraes: "Er verkauft sein altes Fahrrad.", exPerf: "Sie haben ihr Haus verkauft.", exFut: "Ich werde mein altes Handy verkaufen.", fa: "فروختن", en: "to sell", uk: "продавати" },
+  { inf: "verstehen", praes: "versteht", perf: "hat verstanden", fut: "wird verstehen", conj: ["verstehe", "verstehst", "versteht", "verstehen", "versteht", "verstehen"], exPraes: "Ich verstehe die Frage sehr gut.", exPerf: "Hast du alles verstanden?", exFut: "Mit Übung wirst du alles verstehen.", fa: "فهمیدن / درک کردن", en: "to understand", uk: "розуміти" },
+  { inf: "warten", praes: "wartet", perf: "hat gewartet", fut: "wird warten", conj: ["warte", "wartest", "wartet", "warten", "wartet", "warten"], exPraes: "Ich warte an der Haltestelle auf den Bus.", exPerf: "Wir haben zehn Minuten gewartet.", exFut: "Ich werde vor dem Eingang auf dich warten.", fa: "منتظر ماندن / صبر کردن", en: "to wait", uk: "чекати" },
+  { inf: "waschen", praes: "wäscht", perf: "hat gewaschen", fut: "wird waschen", conj: ["wasche", "wäschst", "wäscht", "waschen", "wascht", "waschen"], exPraes: "Ich wasche meine Hände mit Seife.", exPerf: "Er hat sein Auto gewaschen.", exFut: "Morgen werde ich die Kleidung waschen.", fa: "شستن", en: "to wash", uk: "мити / прати" },
+  { inf: "wissen", praes: "weiß", perf: "hat gewusst", fut: "wird wissen", conj: ["weiß", "weißt", "weiß", "wissen", "wisst", "wissen"], exPraes: "Weißt du, wann der Kurs anfängt?", exPerf: "Ich habe die Antwort nicht gewusst.", exFut: "Morgen werden wir das Ergebnis wissen.", fa: "دانستن / فهمیدن", en: "to know (a fact)", uk: "знати" },
+  { inf: "wohnen", praes: "wohnt", perf: "hat gewohnt", fut: "wird wohnen", conj: ["wohne", "wohnst", "wohnt", "wohnen", "wohnt", "wohnen"], exPraes: "Ich wohne in einer schönen Wohnung in Kiel.", exPerf: "Früher hat er auf dem Land gewohnt.", exFut: "Bald werden wir in einer größeren Wohnung wohnen.", fa: "سکونت داشتن / زندگی کردن", en: "to live / reside", uk: "мешкати / проживати" },
+  { inf: "wollen", praes: "will", perf: "hat gewollt", fut: "wird wollen", conj: ["will", "willst", "will", "wollen", "wollt", "wollen"], exPraes: "Ich will gut Deutsch lernen.", exPerf: "Er hat uns helfen wollen.", exFut: "Sie wird bestimmt mitkommen wollen.", fa: "خواستن", en: "to want", uk: "хотіти" }
+];
+// Common everyday verb missing from the original list.
+VERBS_DB.push({ inf: "spazieren", praes: "spaziert", perf: "ist spazieren gegangen", fut: "wird spazieren", conj: ["spaziere", "spazierst", "spaziert", "spazieren", "spaziert", "spazieren"], exPraes: "Ich gehe jeden Abend spazieren.", exPerf: "Wir sind gestern im Park spazieren gegangen.", exFut: "Morgen werde ich am Meer spazieren.", fa: "قدم زدن / گشت‌وگذار کردن", en: "to take a walk", uk: "гуляти" });
+
+// =========================================================================
+// EXPANDED GERMAN NOUNS DATABASE (Including Tomate, Kartoffel, Zwiebel, Gurke, Karotte, etc.)
+// =========================================================================
+// OFFLINE REGULAR-VERB ENGINE: forms thousands of regular German infinitives without internet.
+// Irregular, mixed, modal and strong verbs should be stored explicitly in VERBS_DB.
+const OFFLINE_EXTRA_VERBS = `abändern abarbeiten abatmen abbilden abblenden abdecken abdrucken abfahren abfragen abfüllen abgeben abgrenzen abkühlen ablagern ablegen ablehnen ablenken abliefern abmachen abmelden abmessen abnehmen abnutzen abpacken abpassen abstellen abstimmen abtrocknen abwarten abwaschen abwechseln abzeichnen achten addieren adressieren akzeptieren alarmieren analysieren ändern angeln ankreuzen anmelden anpassen anprobieren anstellen antippen arbeiten atmen aufbauen aufbewahren aufdrehen aufklären aufkleben aufladen aufräumen aufregen aufteilen aufwärmen ausbilden ausdrucken ausfüllen ausleeren ausmachen auspacken ausruhen ausstatten austauschen auswerten baden basteln beantworten bearbeiten bedeuten beeilen beeinflussen begrüßen behandeln behaupten beheben behalten bejahen bekleben belohnen bemerken benutzen beraten berichten beschäftigen bestellen betonen bewundern bezahlen biegen blättern blinken blockieren blühen buchen bügeln chatten checken danken dauern dekorieren demonstrieren diskutieren dokumentieren drucken duschen eilen einatmen einbauen eincremen eindrucken einführen einpacken einrichten einschalten einzeichnen empfehlen entschuldigen entwickeln erfinden ergänzen erinnern erklären erlauben erleben eröffnen ersetzen erwarten erzählen erziehen exportieren feiern filmen finanzieren fotografieren fragen frühstücken fühlen funktionieren führen garantieren gebrauchen gefährden gehören genießen genügen gestalten gratulieren grillen grüßen handeln heiraten heizen herstellen hoffen holen informieren installieren interessieren joggen kämpfen kaufen kehren klären klingeln klopfen kochen kombinieren kontrollieren kopieren kosten kündigen lächeln landen landen lassen lernen liefern loben lösen malen markieren meinen mieten mischen moderieren montieren motivieren nähen nennen notieren ordnen organisieren packen parken passieren pausieren planen probieren produzieren programmieren putzen qualifizieren rechnen reden regeln reinigen reisen reparieren reservieren retten riskieren rollen sammeln schaffen schalten schätzen schicken schildern schließen schmecken schminken schneiden servieren sichern signalisieren spielen spülen starten staunen staubsaugen stecken stellen stören studieren suchen tanzen teilen telefonieren testen tippen trainieren träumen trennen trocknen üben übersetzen überweisen umarmen umarmen umdrehen umtauschen umziehen unterrichten untersuchen unterstützen verwenden verabreden vereinbaren verkaufen vermieten vermissen verpacken versichern versuchen verwalten vorbereiten vorstellen warten wandern wechseln wecken weinen wenden wiederholen winken wünschen wohnen zahlen zeichnen zeigen zelten zerstören zubereiten zuhören zumachen zurückgeben`.split(/\s+/);
+const EXTRA_VERB_SET = new Set(OFFLINE_EXTRA_VERBS);
+function makeRegularOfflineVerb(inf) {
+  const irregular = new Set(['abfahren','abnehmen','abwaschen','backen','befehlen','beginnen','beißen','bergen','bersten','bewegen','biegen','bieten','binden','bitten','blasen','bleiben','braten','brechen','brennen','bringen','denken','dürfen','empfehlen','erschrecken','essen','fahren','fallen','fangen','finden','fliegen','fliehen','fließen','fressen','frieren','geben','gehen','gelten','genießen','geschehen','gewinnen','gießen','gleichen','gleiten','graben','greifen','haben','halten','hängen','heben','heißen','helfen','kennen','kommen','können','laden','lassen','laufen','leiden','leihen','lesen','liegen','lügen','meiden','messen','mögen','müssen','nehmen','nennen','raten','reiben','reißen','reiten','rennen','riechen','rufen','schlafen','schlagen','schließen','schneiden','schreiben','schreien','schweigen','schwimmen','sehen','sein','senden','singen','sinken','sitzen','sollen','sprechen','springen','stehen','stehlen','steigen','sterben','stoßen','streiten','tragen','treffen','treiben','treten','trinken','tun','vergessen','verlieren','wachsen','waschen','weichen','weisen','wenden','werben','werden','werfen','wiegen','wissen','wollen','ziehen']);
+  const word = String(inf || "").toLowerCase();
+  if (!/^[a-zäöüß]+en$/i.test(word) || irregular.has(word) || /^(be|emp|ent|er|ge|miss|ver|zer)/i.test(word)) return null;
+
+  const prefixes = ['auseinander','zurück','zusammen','empor','heraus','hinein','herunter','hinunter','vorbei','weiter','wieder','ab','an','auf','aus','bei','ein','mit','nach','vor','weg','zu'];
+  const prefix = prefixes.find(p => word.startsWith(p) && word.length > p.length + 2);
+  const separable = !!prefix;
+  const base = separable ? word.slice(prefix.length) : word;
+  const stem = base.slice(0, -2);
+  const eStem = /(d|t|chn|ffn|gn|tm)$/.test(stem);
+  let six;
+  if (word.endsWith('ieren')) {
+    six = [stem+'e', stem+'st', stem+'t', stem+'en', stem+'t', stem+'en'];
+  } else {
+    six = [stem+'e', stem+(eStem?'est':'st'), stem+(eStem?'et':'t'), stem+'en', stem+(eStem?'et':'t'), stem+'en'];
+  }
+  const attach = form => separable ? `${form} ${prefix}` : form;
+  const visibleForms = six.map(attach);
+  let participle;
+  if (word.endsWith('ieren')) participle = stem+'t';
+  else participle = separable
+    ? `${prefix}ge${stem}${/(t|d)$/.test(stem) ? 'et' : 't'}`
+    : `ge${stem}${/(t|d)$/.test(stem) ? 'et' : 't'}`;
+  const aux = ['sein','bleiben','werden','gehen','kommen','fahren','laufen','reisen','fliegen'].includes(word) ? 'ist' : 'hat';
+  const perfect = `${aux} ${participle}`;
+  return {
+    inf: word, praes: visibleForms[2], perf: perfect, fut: `wird ${word}`,
+    conj: visibleForms,
+    exPraes: separable ? `Ich ${six[0]} heute ${prefix}.` : `Ich ${visibleForms[0]} heute.`,
+    exPerf: `Ich ${aux === "ist" ? "bin" : "habe"} ${participle}.`,
+    exFut: `Ich werde morgen ${word}.`,
+    fa: '—', en: '—', uk: '—', generated: true
+  };
+}
+const NOUNS_DB = [
+  { word: "Tomate", art: "die", pl: "die Tomaten", fa: "گوجه فرنگی / بادنجان رومی", en: "tomato", uk: "помідор / томат" },
+  { word: "Kartoffel", art: "die", pl: "die Kartoffeln", fa: "سیب‌زمینی / کچالو", en: "potato", uk: "картопля" },
+  { word: "Zwiebel", art: "die", pl: "die Zwiebeln", fa: "پیاز", en: "onion", uk: "цибуля" },
+  { word: "Knoblauch", art: "der", pl: "—", fa: "سیر", en: "garlic", uk: "часник" },
+  { word: "Gurke", art: "die", pl: "die Gurken", fa: "خیار", en: "cucumber", uk: "огірок" },
+  { word: "Karotte", art: "die", pl: "die Karotten", fa: "هویج / زردک", en: "carrot", uk: "морква" },
+  { word: "Paprika", art: "die", pl: "die Paprikas", fa: "فلفل دلمه‌ای / مرچ شیرین", en: "bell pepper / paprika", uk: "перець" },
+  { word: "Kohl", art: "der", pl: "die Kohle", fa: "کلم", en: "cabbage", uk: "капуста" },
+  { word: "Salat", art: "der", pl: "die Salate", fa: "سالاد / کاهو", en: "salad / lettuce", uk: "салат" },
+  { word: "Reis", art: "der", pl: "—", fa: "برنج", en: "rice", uk: "рис" },
+  { word: "Nudeln", art: "die", pl: "die Nudeln (Plural)", fa: "ماکارونی / رشته", en: "noodles / pasta", uk: "макарони / локшина" },
+  { word: "Ei", art: "das", pl: "die Eier", fa: "تخم‌مرغ", en: "egg", uk: "яйце" },
+  { word: "Butter", art: "die", pl: "—", fa: "کره / مسکه", en: "butter", uk: "масло" },
+  { word: "Zucker", art: "der", pl: "—", fa: "شکر / بوره", en: "sugar", uk: "цукор" },
+  { word: "Salz", art: "das", pl: "die Salze", fa: "نمک", en: "salt", uk: "сіль" },
+  { word: "Pfeffer", art: "der", pl: "—", fa: "فلفل سیاه / مرچ سیاه", en: "pepper", uk: "перець" },
+  { word: "Öl", art: "das", pl: "die Öle", fa: "روغن", en: "oil", uk: "олія" },
+  { word: "Orange", art: "die", pl: "die Orangen", fa: "پرتقال / نارنج", en: "orange", uk: "апельсин" },
+  { word: "Zitrone", art: "die", pl: "die Zitronen", fa: "لیمو", en: "lemon", uk: "лимон" },
+  { word: "Traube", art: "die", pl: "die Trauben", fa: "انگور", en: "grape", uk: "виноград" },
+  { word: "Erdbeere", art: "die", pl: "die Erdbeeren", fa: "توت‌فرنگی", en: "strawberry", uk: "полуниця" },
+  { word: "Birne", art: "die", pl: "die Birnen", fa: "گلابی / ناک", en: "pear", uk: "груша" },
+  { word: "Fahrrad", art: "das", pl: "die Fahrräder", fa: "دوچرخه / بایسکل", en: "bicycle / bike", uk: "велосипед" },
+  { word: "Auto", art: "das", pl: "die Autos", fa: "ماشین / موتر", en: "car", uk: "автомобіль / машина" },
+  { word: "Bus", art: "der", pl: "die Busse", fa: "اتوبوس / بس", en: "bus", uk: "автобус" },
+  { word: "Zug", art: "der", pl: "die Züge", fa: "قطار", en: "train", uk: "поїзд / потяг" },
+  { word: "Bahnhof", art: "der", pl: "die Bahnhöfe", fa: "ایستگاه قطار", en: "train station", uk: "вокзал" },
+  { word: "Flughafen", art: "der", pl: "die Flughäfen", fa: "فرودگاه / میدان هوایی", en: "airport", uk: "аеропорт" },
+  { word: "Flugzeug", art: "das", pl: "die Flugzeuge", fa: "هواپیما / طیاره", en: "airplane", uk: "літак" },
+  { word: "Ticket", art: "das", pl: "die Tickets", fa: "بلیط / تکت", en: "ticket", uk: "квиток" },
+  { word: "Fahrkarte", art: "die", pl: "die Fahrkarten", fa: "بلیط سفر", en: "travel ticket", uk: "проїзний квиток" },
+  { word: "Straße", art: "die", pl: "die Straßen", fa: "خیابان / سرک", en: "street / road", uk: "вулиця" },
+  { word: "Stadt", art: "die", pl: "die Städte", fa: "شهر", en: "city / town", uk: "місто" },
+  { word: "Land", art: "das", pl: "die Länder", fa: "کشور", en: "country / countryside", uk: "країна" },
+  { word: "Haus", art: "das", pl: "die Häuser", fa: "خانه", en: "house", uk: "будинок" },
+  { word: "Wohnung", art: "die", pl: "die Wohnungen", fa: "آپارتمان / منزل", en: "apartment / flat", uk: "квартира" },
+  { word: "Zimmer", art: "das", pl: "die Zimmer", fa: "اتاق", en: "room", uk: "кімната" },
+  { word: "Küche", art: "die", pl: "die Küchen", fa: "آشپزخانه", en: "kitchen", uk: "кухня" },
+  { word: "Bad", art: "das", pl: "die Bäder", fa: "حمام", en: "bathroom / bath", uk: "ванна кімната" },
+  { word: "Tür", art: "die", pl: "die Türen", fa: "در", en: "door", uk: "двері" },
+  { word: "Fenster", art: "das", pl: "die Fenster", fa: "پنجره", en: "window", uk: "вікно" },
+  { word: "Tisch", art: "der", pl: "die Tische", fa: "میز", en: "table", uk: "стіл" },
+  { word: "Stuhl", art: "der", pl: "die Stühle", fa: "صندلی / چوکی", en: "chair", uk: "стілець" },
+  { word: "Bett", art: "das", pl: "die Betten", fa: "تختخواب", en: "bed", uk: "ліжко" },
+  { word: "Schrank", art: "der", pl: "die Schränke", fa: "کمد / الماری", en: "wardrobe / cupboard", uk: "шафа" },
+  { word: "Lampe", art: "die", pl: "die Lampen", fa: "چراغ / لامپ", en: "lamp", uk: "лампа" },
+  { word: "Schlüssel", art: "der", pl: "die Schlüssel", fa: "کلید", en: "key", uk: "ключ" },
+  { word: "Buch", art: "das", pl: "die Bücher", fa: "کتاب", en: "book", uk: "книга" },
+  { word: "Heft", art: "das", pl: "die Hefte", fa: "دفتر / کتابچه", en: "notebook", uk: "зошит" },
+  { word: "Stift", art: "der", pl: "die Stifte", fa: "خودکار / مداد / قلم", en: "pen / pencil", uk: "ручка / олівець" },
+  { word: "Kugelschreiber", art: "der", pl: "die Kugelschreiber", fa: "خودکار", en: "ballpoint pen", uk: "кулькова ручка" },
+  { word: "Tasche", art: "die", pl: "die Taschen", fa: "کیف / بکس", en: "bag", uk: "сумка" },
+  { word: "Schule", art: "die", pl: "die Schulen", fa: "مدرسه / مکتب", en: "school", uk: "школа" },
+  { word: "Universität", art: "die", pl: "die Universitäten", fa: "دانشگاه / پوهنتون", en: "university", uk: "університет" },
+  { word: "Kurs", art: "der", pl: "die Kurse", fa: "دوره / کورس", en: "course", uk: "курс" },
+  { word: "Lehrer", art: "der", pl: "die Lehrer", fa: "معلم / استاد (مرد)", en: "teacher (male)", uk: "вчитель" },
+  { word: "Lehrerin", art: "die", pl: "die Lehrerinnen", fa: "معلم / استاد (زن)", en: "teacher (female)", uk: "вчителька" },
+  { word: "Schüler", art: "der", pl: "die Schüler", fa: "دانش‌آموز / شاگرد", en: "pupil / student", uk: "учень" },
+  { word: "Student", art: "der", pl: "die Studenten", fa: "دانشجو / محصل", en: "university student", uk: "студент" },
+  { word: "Prüfung", art: "die", pl: "die Prüfungen", fa: "امتحان / آزمون", en: "exam / test", uk: "іспит / екзамен" },
+  { word: "Frage", art: "die", pl: "die Fragen", fa: "سؤال", en: "question", uk: "питання" },
+  { word: "Antwort", art: "die", pl: "die Antworten", fa: "پاسخ / جواب", en: "answer", uk: "відповідь" },
+  { word: "Wort", art: "das", pl: "die Wörter", fa: "کلمه / واژه", en: "word", uk: "слово" },
+  { word: "Satz", art: "der", pl: "die Sätze", fa: "جمله", en: "sentence", uk: "речення" },
+  { word: "Sprache", art: "die", pl: "die Sprachen", fa: "زبان", en: "language", uk: "мова" },
+  { word: "Wasser", art: "das", pl: "—", fa: "آب", en: "water", uk: "вода" },
+  { word: "Kaffee", art: "der", pl: "die Kaffees", fa: "قهوه", en: "coffee", uk: "кава" },
+  { word: "Tee", art: "der", pl: "die Tees", fa: "چای", en: "tea", uk: "чай" },
+  { word: "Milch", art: "die", pl: "—", fa: "شیر", en: "milk", uk: "молоко" },
+  { word: "Brot", art: "das", pl: "die Brote", fa: "نان", en: "bread", uk: "хліб" },
+  { word: "Brötchen", art: "das", pl: "die Brötchen", fa: "نان کوچک / کلچه", en: "bread roll", uk: "булочка" },
+  { word: "Käse", art: "der", pl: "die Käse", fa: "پنیر", en: "cheese", uk: "сир" },
+  { word: "Apfel", art: "der", pl: "die Äpfel", fa: "سیب", en: "apple", uk: "яблуко" },
+  { word: "Banane", art: "die", pl: "die Bananen", fa: "موز / کیله", en: "banana", uk: "банан" },
+  { word: "Obst", art: "das", pl: "—", fa: "میوه", en: "fruit", uk: "фрукти" },
+  { word: "Gemüse", art: "das", pl: "—", fa: "سبزیجات", en: "vegetables", uk: "овочі" },
+  { word: "Fleisch", art: "das", pl: "—", fa: "گوشت", en: "meat", uk: "м'ясо" },
+  { word: "Fisch", art: "der", pl: "die Fische", fa: "ماهی", en: "fish", uk: "риба" },
+  { word: "Essen", art: "das", pl: "die Essen", fa: "غذا", en: "food / meal", uk: "їжа" },
+  { word: "Restaurant", art: "das", pl: "die Restaurants", fa: "رستوران", en: "restaurant", uk: "ресторан" },
+  { word: "Supermarkt", art: "der", pl: "die Supermärkte", fa: "سوپرمارکت", en: "supermarket", uk: "супермаркет" },
+  { word: "Geld", art: "das", pl: "die Gelder", fa: "پول", en: "money", uk: "гроші" },
+  { word: "Preis", art: "der", pl: "die Preise", fa: "قیمت", en: "price", uk: "ціна" },
+  { word: "Rechnung", art: "die", pl: "die Rechnungen", fa: "صورتحساب", en: "bill / invoice", uk: "рахунок" },
+  { word: "Arbeit", art: "die", pl: "die Arbeiten", fa: "کار", en: "work / job", uk: "робота" },
+  { word: "Beruf", art: "der", pl: "die Berufe", fa: "شغل / حرفه", en: "profession / occupation", uk: "професія" },
+  { word: "Arzt", art: "der", pl: "die Ärzte", fa: "پزشک / داکتر (مرد)", en: "doctor (male)", uk: "лікар" },
+  { word: "Ärztin", art: "die", pl: "die Ärztinnen", fa: "پزشک / داکتر (زن)", en: "doctor (female)", uk: "лікарка" },
+  { word: "Krankenhaus", art: "das", pl: "die Krankenhäuser", fa: "بیمارستان / شفاخانه", en: "hospital", uk: "лікарня" },
+  { word: "Apotheke", art: "die", pl: "die Apotheken", fa: "داروخانه / دواخانه", en: "pharmacy", uk: "аптека" },
+  { word: "Mann", art: "der", pl: "die Männer", fa: "مرد / شوهر", en: "man / husband", uk: "чоловік" },
+  { word: "Frau", art: "die", pl: "die Frauen", fa: "زن / همسر", en: "woman / wife", uk: "жінка / дружина" },
+  { word: "Kind", art: "das", pl: "die Kinder", fa: "کودک / طفل", en: "child", uk: "дитина" },
+  { word: "Mädchen", art: "das", pl: "die Mädchen", fa: "دختر", en: "girl", uk: "дівчина / дівчинка" },
+  { word: "Junge", art: "der", pl: "die Jungen", fa: "پسر", en: "boy", uk: "хлопець / хлопчик" },
+  { word: "Familie", art: "die", pl: "die Familien", fa: "خانواده / فامیل", en: "family", uk: "сім'я / родина" },
+  { word: "Mutter", art: "die", pl: "die Mütter", fa: "مادر", en: "mother", uk: "мати / мама" },
+  { word: "Vater", art: "der", pl: "die Väter", fa: "پدر", en: "father", uk: "батько / тато" },
+  { word: "Bruder", art: "der", pl: "die Brüder", fa: "برادر", en: "brother", uk: "брат" },
+  { word: "Schwester", art: "die", pl: "die Schwestern", fa: "خواهر", en: "sister", uk: "сестра" },
+  { word: "Freund", art: "der", pl: "die Freunde", fa: "دوست / رفیق (پسر)", en: "friend / boyfriend", uk: "друг" },
+  { word: "Freundin", art: "die", pl: "die Freundinnen", fa: "دوست / رفیق (دختر)", en: "friend / girlfriend", uk: "подруга" },
+  { word: "Tag", art: "der", pl: "die Tage", fa: "روز", en: "day", uk: "день" },
+  { word: "Woche", art: "die", pl: "die Wochen", fa: "هفته", en: "week", uk: "тиждень" },
+  { word: "Monat", art: "der", pl: "die Monate", fa: "ماه", en: "month", uk: "місяць" },
+  { word: "Jahr", art: "das", pl: "die Jahre", fa: "سال", en: "year", uk: "рік" },
+  { word: "Zeit", art: "die", pl: "die Zeiten", fa: "زمان / وقت", en: "time", uk: "час" },
+  { word: "Uhr", art: "die", pl: "die Uhren", fa: "ساعت", en: "clock / watch / o'clock", uk: "годинник / година" },
+  { word: "Handy", art: "das", pl: "die Handys", fa: "تلفن همراه / موبایل", en: "mobile phone", uk: "мобільний телефон" },
+  { word: "Computer", art: "der", pl: "die Computer", fa: "کامپیوتر / کمپیوتر", en: "computer", uk: "комп'ютер" },
+  { word: "Wetter", art: "das", pl: "—", fa: "آب و هوا", en: "weather", uk: "погода" },
+  { word: "Sonne", art: "die", pl: "die Sonnen", fa: "خورشید / آفتاب", en: "sun", uk: "сонце" },
+  { word: "Regen", art: "der", pl: "—", fa: "باران", en: "rain", uk: "дощ" },
+  { word: "Hund", art: "der", pl: "die Hunde", fa: "سگ", en: "dog", uk: "собака" },
+  { word: "Katze", art: "die", pl: "die Katzen", fa: "گربه / پشک", en: "cat", uk: "кіт / кішка" },
+  { word: "Problem", art: "das", pl: "die Probleme", fa: "مشکل / مسئله", en: "problem", uk: "проблема" },
+  { word: "Hilfe", art: "die", pl: "die Hilfen", fa: "کمک", en: "help", uk: "допомога" }
+];
+
+// =========================================================================
+// SPEECH SYNTHESIS HELPER (German)
+// =========================================================================
+function speakGerman(text) {
+  if (!text || text === "—") return;
+  if (!("speechSynthesis" in window)) {
+    alert("Speech synthesis is not supported in this browser.");
+    return;
+  }
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = "de-DE";
+  utter.rate = 0.92;
+  window.speechSynthesis.speak(utter);
+}
+
+// =========================================================================
+// 1. VERB CHECKER LOGIC + AUTOCOMPLETE (PRÄSENS, PERFEKT, FUTUR I + CONJUGATION)
+// =========================================================================
+const verbInput = document.getElementById("verbInput");
+const verbAcList = document.getElementById("verbAcList");
+let selectedVerbObj = null;
+
+function setConjugationCells(infLabel, forms) {
+  document.getElementById("conjInfLabel").textContent = infLabel || "—";
+  const ids = ["conjIch", "conjDu", "conjEr", "conjWir", "conjIhr", "conjSie"];
+  ids.forEach((id, idx) => {
+    document.getElementById(id).textContent = forms ? forms[idx] : "—";
+  });
+}
+
+function renderVerbResult(vObj, rawTyped) {
+  if (vObj) {
+    document.getElementById("verbWikiWrap").hidden = true;
+    document.getElementById("verbSourceNote").textContent = vObj.generated ? "صرف تقریبیِ فعل با قاعدهٔ عمومی آلمانی، به‌صورت آفلاین ساخته شده است؛ فعل‌های استثنایی ممکن است متفاوت باشند." : "Found in the built-in offline verb list.";
+    selectedVerbObj = vObj;
+    document.getElementById("verbPraesens").textContent = `er/sie ${vObj.praes}`;
+    document.getElementById("verbPerfekt").textContent = vObj.perf;
+    document.getElementById("verbFutur").textContent = vObj.fut;
+
+    document.getElementById("verbExPraesens").textContent = "Beispiel: " + vObj.exPraes;
+    document.getElementById("verbExPerfekt").textContent = "Beispiel: " + vObj.exPerf;
+    document.getElementById("verbExFutur").textContent = "Beispiel: " + vObj.exFut;
+
+    setConjugationCells(vObj.inf, vObj.conj);
+
+    document.getElementById("verbFa").textContent = vObj.fa;
+    document.getElementById("verbEn").textContent = vObj.en;
+    document.getElementById("verbUk").textContent = vObj.uk;
+  } else if (rawTyped && rawTyped.trim().length > 1) {
+    selectedVerbObj = null;
+    const clean = rawTyped.trim().toLowerCase();
+    ["verbPraesens", "verbPerfekt", "verbFutur"].forEach(id => document.getElementById(id).textContent = "Not available in offline list");
+    ["verbExPraesens", "verbExPerfekt", "verbExFutur"].forEach(id => document.getElementById(id).textContent = "Beispiel: —");
+    setConjugationCells(clean + " (not verified)", null);
+    document.getElementById("verbFa").textContent = "در فهرست آفلاین نیست";
+    document.getElementById("verbEn").textContent = "Not in offline list";
+    document.getElementById("verbUk").textContent = "Немає в офлайн-словнику";
+    document.getElementById("verbSourceNote").textContent = "This verb is not in the offline list or supported by the regular offline conjugator. No forms are guessed; use the source link below.";
+    document.getElementById("verbWikiLink").href = `https://de.wiktionary.org/wiki/${encodeURIComponent(clean)}`;
+    document.getElementById("verbWikiWrap").hidden = false;
+  } else {
+    document.getElementById("verbWikiWrap").hidden = true;
+    document.getElementById("verbSourceNote").textContent = "Offline verb list plus online Wiktionary lookup. Unknown verb forms are not guessed.";
+    selectedVerbObj = null;
+    document.getElementById("verbPraesens").textContent = "—";
+    document.getElementById("verbPerfekt").textContent = "—";
+    document.getElementById("verbFutur").textContent = "—";
+
+    document.getElementById("verbExPraesens").textContent = "Beispiel: —";
+    document.getElementById("verbExPerfekt").textContent = "Beispiel: —";
+    document.getElementById("verbExFutur").textContent = "Beispiel: —";
+
+    setConjugationCells("—", null);
+
+    document.getElementById("verbFa").textContent = "—";
+    document.getElementById("verbEn").textContent = "—";
+    document.getElementById("verbUk").textContent = "—";
+  }
+}
+
+// Live title suggestions: query Wiktionary while the user types, rather than
+// waiting for a large category index to finish loading. Prefix search also
+// returns words such as "mitmachen" when the user types only "mit".
+const liveSuggestionTimers = new WeakMap();
+const liveSuggestionTokens = new WeakMap();
+async function fetchLiveWiktionaryTitles(query) {
+  const params = new URLSearchParams({
+    action: "query", list: "prefixsearch", pssearch: query,
+    psnamespace: "0", pslimit: "12", format: "json", origin: "*"
+  });
+  const response = await fetch(`https://de.wiktionary.org/w/api.php?${params.toString()}`);
+  if (!response.ok) throw new Error(`Wiktionary HTTP ${response.status}`);
+  const data = await response.json();
+  let titles = (data?.query?.prefixsearch || []).map(x => x.title);
+  // If no exact prefix is found, ask Wiktionary's search engine for close matches.
+  if (titles.length < 5 && query.length >= 3) {
+    try {
+      const fuzzy = new URLSearchParams({
+        action: "query", list: "search", srsearch: `${query}~`,
+        srnamespace: "0", srlimit: "8", format: "json", origin: "*"
+      });
+      const r2 = await fetch(`https://de.wiktionary.org/w/api.php?${fuzzy.toString()}`);
+      if (r2.ok) {
+        const d2 = await r2.json();
+        titles = titles.concat((d2?.query?.search || []).map(x => x.title));
+      }
+    } catch (_) { /* Prefix suggestions remain useful if fuzzy search is unavailable. */ }
+  }
+  return [...new Set(titles)].filter(t => /^[\p{L}ÄÖÜäöüß-]+$/u.test(t)).slice(0, 12);
+}
+function scheduleLiveSuggestions(input, list, kind) {
+  const query = input.value.trim();
+  if (query.length < 2) return;
+  const previous = liveSuggestionTimers.get(input);
+  if (previous) clearTimeout(previous);
+  const token = (liveSuggestionTokens.get(input) || 0) + 1;
+  liveSuggestionTokens.set(input, token);
+  liveSuggestionTimers.set(input, setTimeout(async () => {
+    try {
+      const titles = await fetchLiveWiktionaryTitles(query);
+      if (liveSuggestionTokens.get(input) !== token || input.value.trim() !== query) return;
+      const existing = new Set([...list.querySelectorAll('.ac-word')].map(el => el.textContent.replace(/^(der|die|das|\?)\s+/i, '').toLowerCase()));
+      const fresh = titles.filter(t => !existing.has(t.toLowerCase()));
+      if (!fresh.length) return;
+      const note = document.createElement('div');
+      note.className = 'ac-online-note';
+      note.textContent = 'Online suggestions from German Wiktionary';
+      list.appendChild(note);
+      fresh.forEach(title => {
+        const div = document.createElement('div');
+        div.className = 'ac-item';
+        const word = document.createElement('span');
+        word.className = 'ac-word';
+        word.textContent = kind === 'noun' ? `? ${title}` : title;
+        const detail = document.createElement('span');
+        detail.className = 'ac-sub';
+        detail.textContent = 'Wiktionary • check entry';
+        div.append(word, detail);
+        div.addEventListener('mousedown', e => {
+          e.preventDefault();
+          input.value = title;
+          list.style.display = 'none';
+          if (kind === 'verb') {
+            renderVerbResult(null, title);
+            onlineVerbStatus.textContent = 'Selected online suggestion. Choose Search online verb to load its entry.';
+          } else if (kind === 'noun') {
+            renderNounResult(null, title);
+            onlineNounStatus.textContent = 'Selected online suggestion. Choose Search online noun to verify its article and plural.';
+          } else {
+            onlineDictStatus.textContent = 'Selected Wiktionary suggestion. Choose Online translation to translate it.';
+            onlineDictBtn.click();
+          }
+        });
+        list.appendChild(div);
+      });
+      list.style.display = 'block';
+    } catch (error) {
+      if (liveSuggestionTokens.get(input) === token) {
+        const status = kind === 'verb' ? onlineVerbStatus : kind === 'noun' ? onlineNounStatus : onlineDictStatus;
+        if (status) status.textContent = 'Online suggestions unavailable. Check internet access; offline suggestions still work.';
+      }
+    }
+  }, 280));
+}
+
+verbInput.addEventListener("input", () => {
+  const q = verbInput.value.trim().toLowerCase();
+  verbAcList.innerHTML = "";
+  if (!q) {
+    verbAcList.style.display = "none";
+    renderVerbResult(null, "");
+    return;
+  }
+  const exact = VERBS_DB.find(v => v.inf.toLowerCase() === q);
+  const generated = !exact && EXTRA_VERB_SET.has(q) ? makeRegularOfflineVerb(q) : null;
+  if (exact) renderVerbResult(exact, q);
+  else if (generated) renderVerbResult(generated, q);
+  else renderVerbResult(null, q);
+
+  const matches = [...VERBS_DB, ...OFFLINE_EXTRA_VERBS.map(makeRegularOfflineVerb).filter(Boolean)].filter(v =>
+    v.inf.toLowerCase().startsWith(q) || v.inf.toLowerCase().includes(q)
+  ).slice(0, 10);
+  const remoteMatches = remoteVerbWords.filter(w => w.toLowerCase().startsWith(q) || w.toLowerCase().includes(q)).slice(0, 10);
+  for (const word of remoteMatches) if (!matches.some(m => m.inf.toLowerCase() === word.toLowerCase())) matches.push({ inf: word, conj: ["—", "—"], en: "Online Wiktionary entry" });
+
+  if (matches.length > 0) {
+    matches.forEach(m => {
+      const div = document.createElement("div");
+      div.className = "ac-item";
+      div.innerHTML = `<span class="ac-word">${m.inf}</span><span class="ac-sub">ich ${m.conj[0]} • du ${m.conj[1]} • ${m.en}</span>`;
+      div.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        verbInput.value = m.inf;
+        verbAcList.style.display = "none";
+        if (m.conj[0] === "—") { verbInput.value = m.inf; renderVerbResult(null, m.inf); onlineVerbStatus.textContent = "Click Search online verb to retrieve its entry and translation."; } else renderVerbResult(m, m.inf);
+      });
+      verbAcList.appendChild(div);
+    });
+    verbAcList.style.display = "block";
+  } else {
+    verbAcList.style.display = "none";
+  }
+  scheduleLiveSuggestions(verbInput, verbAcList, "verb");
+});
+
+verbInput.addEventListener("blur", () => {
+  setTimeout(() => { verbAcList.style.display = "none"; }, 160);
+});
+
+document.getElementById("speakVerbBtn").addEventListener("click", () => {
+  if (selectedVerbObj) {
+    const c = selectedVerbObj.conj;
+    speakGerman(`${selectedVerbObj.inf}. ich ${c[0]}, du ${c[1]}, er ${c[2]}, wir ${c[3]}, ihr ${c[4]}, sie ${c[5]}. Präsens: ${selectedVerbObj.exPraes} Perfekt: ${selectedVerbObj.exPerf} Futur eins: ${selectedVerbObj.exFut}`);
+  } else if (verbInput.value.trim()) {
+    speakGerman(verbInput.value.trim());
+  }
+});
+
+document.getElementById("clearVerbBtn").addEventListener("click", () => {
+  verbInput.value = "";
+  verbAcList.style.display = "none";
+  renderVerbResult(null, "");
+  verbInput.focus();
+});
+
+// =========================================================================
+// 2. NOUN ARTICLE CHECKER LOGIC + AUTOCOMPLETE
+// =========================================================================
+const nounInput = document.getElementById("nounInput");
+const nounAcList = document.getElementById("nounAcList");
+let selectedNounObj = null;
+
+
+function renderNounResult(nObj, rawTyped) {
+  const mainEl = document.getElementById("nounMainDisplay");
+  if (nObj) {
+    document.getElementById("nounWikiWrap").hidden = true;
+    selectedNounObj = nObj;
+    const pillClass = nObj.art === "der" ? "art-der" : (nObj.art === "die" ? "art-die" : "art-das");
+    mainEl.innerHTML = `<span class="article-pill ${pillClass}">${nObj.art}</span> <strong>${nObj.word}</strong>`;
+    document.getElementById("nounArticleText").textContent = `${nObj.art} ${nObj.word}`;
+    document.getElementById("nounPluralText").textContent = nObj.pl;
+    document.getElementById("nounFa").textContent = nObj.fa;
+    document.getElementById("nounEn").textContent = nObj.en;
+    document.getElementById("nounUk").textContent = nObj.uk;
+    document.getElementById("nounExample").textContent = `Das ist ${nObj.art} ${nObj.word}.`;
+    document.getElementById("nounSourceNote").textContent = "✓ Verified exact German dictionary article.";
+  } else if (rawTyped && rawTyped.trim().length > 1) {
+    selectedNounObj = null;
+    const clean = rawTyped.trim();
+    const cap = clean.charAt(0).toUpperCase() + clean.slice(1);
+    mainEl.textContent = cap;
+    document.getElementById("nounArticleText").textContent = "Not found in offline list — check Wiktionary";
+    document.getElementById("nounPluralText").textContent = "—";
+    document.getElementById("nounFa").textContent = "در فهرست آفلاین نیست؛ از جست‌وجوی آنلاین استفاده کنید";
+    document.getElementById("nounEn").textContent = "Not in offline list";
+    document.getElementById("nounUk").textContent = "Немає в офлайн-словнику";
+    document.getElementById("nounExample").textContent = `Das Wort „${cap}“ ist ein deutsches Substantiv.`;
+    document.getElementById("nounSourceNote").textContent = "Article and plural are not guessed. Use the source link below to verify them.";
+    const nounWikiLink = document.getElementById("nounWikiLink");
+    nounWikiLink.href = `https://de.wiktionary.org/wiki/${encodeURIComponent(cap.replaceAll(" ", "_"))}`;
+    document.getElementById("nounWikiWrap").hidden = false;
+  } else {
+    document.getElementById("nounWikiWrap").hidden = true;
+    selectedNounObj = null;
+    mainEl.textContent = "—";
+    document.getElementById("nounArticleText").textContent = "—";
+    document.getElementById("nounPluralText").textContent = "—";
+    document.getElementById("nounFa").textContent = "—";
+    document.getElementById("nounEn").textContent = "—";
+    document.getElementById("nounUk").textContent = "—";
+    document.getElementById("nounExample").textContent = "—";
+    document.getElementById("nounSourceNote").textContent = "Offline noun list; use online Wiktionary lookup for additional nouns and verification.";
+  }
+}
+
+nounInput.addEventListener("input", () => {
+  const raw = nounInput.value.trim();
+  const q = raw.toLowerCase();
+  nounAcList.innerHTML = "";
+  if (!q) {
+    nounAcList.style.display = "none";
+    renderNounResult(null, "");
+    return;
+  }
+  const exact = NOUNS_DB.find(n => n.word.toLowerCase() === q);
+  if (exact) renderNounResult(exact, raw);
+  else renderNounResult(null, raw);
+
+  const matches = NOUNS_DB.filter(n =>
+    n.word.toLowerCase().startsWith(q) || n.word.toLowerCase().includes(q)
+  ).slice(0, 10);
+  const remoteMatches = remoteNounWords.filter(w => w.toLowerCase().startsWith(q) || w.toLowerCase().includes(q)).slice(0, 10);
+  for (const word of remoteMatches) if (!matches.some(m => m.word.toLowerCase() === word.toLowerCase())) matches.push({ word, art: "?", pl: "—", en: "Online Wiktionary entry", fa: "برای بررسی آنلاین انتخاب کنید", uk: "Онлайн-словникова стаття" });
+
+  if (matches.length > 0) {
+    matches.forEach(m => {
+      const div = document.createElement("div");
+      div.className = "ac-item";
+      div.innerHTML = `<span class="ac-word">${m.art} ${m.word}</span><span class="ac-sub">${m.en} • ${m.fa}</span>`;
+      div.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        nounInput.value = m.word;
+        nounAcList.style.display = "none";
+        if (m.art === "?") { nounInput.value = m.word; renderNounResult(null, m.word); onlineNounStatus.textContent = "Click Search online noun to retrieve its article and translation."; } else renderNounResult(m, m.word);
+      });
+      nounAcList.appendChild(div);
+    });
+    nounAcList.style.display = "block";
+  } else {
+    nounAcList.style.display = "none";
+  }
+  scheduleLiveSuggestions(nounInput, nounAcList, "noun");
+});
+
+nounInput.addEventListener("blur", () => {
+  setTimeout(() => { nounAcList.style.display = "none"; }, 160);
+});
+
+document.getElementById("speakNounBtn").addEventListener("click", () => {
+  const txt = document.getElementById("nounArticleText").textContent;
+  if (txt && txt !== "—") {
+    speakGerman(txt.replace("(estimated)", "").trim());
+  }
+});
+
+document.getElementById("clearNounBtn").addEventListener("click", () => {
+  nounInput.value = "";
+  nounAcList.style.display = "none";
+  renderNounResult(null, "");
+  nounInput.focus();
+});
+
+// =========================================================================
+// 3. 3-LANGUAGE DICTIONARY
+// =========================================================================
+const dictInput = document.getElementById("dictInput");
+const dictAcList = document.getElementById("dictAcList");
+
+const ALL_DICT_ENTRIES = [
+  ...NOUNS_DB.map(n => ({
+    de: `${n.art} ${n.word}`,
+    rawDe: n.word,
+    extra: `(Noun • Plural: ${n.pl})`,
+    kind: "noun", article: n.art,
+    fa: n.fa,
+    en: n.en,
+    uk: n.uk
+  })),
+  ...VERBS_DB.map(v => ({
+    de: v.inf,
+    rawDe: v.inf,
+    extra: `(Verb • ich ${v.conj[0]} • ${v.perf})`,
+    kind: "verb", present: v.conj[0],
+    fa: v.fa,
+    en: v.en,
+    uk: v.uk
+  }))
+];
+
+function renderDictEntry(entry) {
+  if (!entry) {
+    document.getElementById("dictDe").textContent = "—";
+    document.getElementById("dictExtra").textContent = "";
+    document.getElementById("dictFa").textContent = "—";
+    document.getElementById("dictEn").textContent = "—";
+    document.getElementById("dictUk").textContent = "—";
+    return;
+  }
+  document.getElementById("dictDe").textContent = entry.de;
+  document.getElementById("dictExtra").textContent = entry.extra;
+  document.getElementById("dictFa").textContent = entry.fa;
+  document.getElementById("dictEn").textContent = entry.en;
+  document.getElementById("dictUk").textContent = entry.uk;
+
+}
+
+dictInput.addEventListener("input", () => {
+  const q = dictInput.value.trim().toLowerCase();
+  dictAcList.innerHTML = "";
+  if (!q) {
+    dictAcList.style.display = "none";
+    renderDictEntry(null);
+    return;
+  }
+  const matches = ALL_DICT_ENTRIES.filter(item =>
+    item.de.toLowerCase().includes(q) ||
+    item.en.toLowerCase().includes(q) ||
+    item.fa.includes(q) ||
+    item.uk.toLowerCase().includes(q)
+  ).slice(0, 12);
+
+  if (matches.length > 0) {
+    renderDictEntry(matches[0]);
+    matches.forEach(m => {
+      const div = document.createElement("div");
+      div.className = "ac-item";
+      div.innerHTML = `<span class="ac-word">${m.de}</span><span class="ac-sub">${m.en} | ${m.uk} | ${m.fa}</span>`;
+      div.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        dictInput.value = m.de;
+        dictAcList.style.display = "none";
+        renderDictEntry(m);
+      });
+      dictAcList.appendChild(div);
+    });
+    dictAcList.style.display = "block";
+  } else {
+    dictAcList.style.display = "none";
+    renderDictEntry(null);
+  }
+  scheduleLiveSuggestions(dictInput, dictAcList, "dict");
+});
+
+dictInput.addEventListener("blur", () => {
+  setTimeout(() => { dictAcList.style.display = "none"; }, 160);
+});
+
+document.getElementById("speakDictBtn").addEventListener("click", () => {
+  const deTxt = document.getElementById("dictDe").textContent;
+  if (deTxt && deTxt !== "—") speakGerman(deTxt);
+});
+
+document.getElementById("clearDictBtn").addEventListener("click", () => {
+  dictInput.value = "";
+  dictAcList.style.display = "none";
+  renderDictEntry(null);
+  onlineDictStatus.textContent = "Online dictionary: Google Translate (German → Persian, English, Ukrainian). For noun gender and plural, check the linked German Wiktionary entry.";
+  wiktionaryLinkWrap.hidden = true;
+  dictInput.focus();
+});
+
+// =========================================================================
+// ONLINE DICTIONARY: large-vocabulary translation fallback
+// Uses the public Google Translate web endpoint; no API key is stored.
+// =========================================================================
+const onlineDictBtn = document.getElementById("onlineDictBtn");
+const onlineDictStatus = document.getElementById("onlineDictStatus");
+const wiktionaryLinkWrap = document.getElementById("wiktionaryLinkWrap");
+const wiktionaryLink = document.getElementById("wiktionaryLink");
+const onlineTranslationCache = new Map();
+
+async function translateOnlineGerman(text, target) {
+  const key = `${text.toLowerCase()}|${target}`;
+  if (onlineTranslationCache.has(key)) return onlineTranslationCache.get(key);
+  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=de&tl=${target}&dt=t&q=${encodeURIComponent(text)}`;
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`Translation service returned ${response.status}`);
+  const data = await response.json();
+  const translated = Array.isArray(data[0]) ? data[0].map(part => part[0] || "").join("").trim() : "";
+  if (!translated) throw new Error("No translation returned");
+  onlineTranslationCache.set(key, translated);
+  return translated;
+}
+
+
+onlineDictBtn.addEventListener("click", async () => {
+  const term = dictInput.value.trim();
+  if (!term) {
+    onlineDictStatus.textContent = "Please enter a German word first.";
+    dictInput.focus();
+    return;
+  }
+  onlineDictBtn.disabled = true;
+  onlineDictBtn.textContent = "⏳ Searching…";
+  onlineDictStatus.textContent = "Searching translations and examples for this word…";
+  wiktionaryLinkWrap.hidden = true;
+try {
+    const [wiki, fa, en, uk] = await Promise.all([
+      wiktionaryExtract(term).catch(() => ({title: term, extract: ""})),
+      translateOnlineGerman(term, "fa"),
+      translateOnlineGerman(term, "en"),
+      translateOnlineGerman(term, "uk")
+    ]);
+    document.getElementById("dictDe").textContent = term;
+    document.getElementById("dictExtra").textContent = "(Online translation • check context)";
+    document.getElementById("dictFa").textContent = fa;
+    document.getElementById("dictEn").textContent = en;
+    document.getElementById("dictUk").textContent = uk;
+
+    const wikiUrl = `https://de.wiktionary.org/wiki/${encodeURIComponent(wiki.title.replaceAll(" ", "_"))}`;
+    wiktionaryLink.href = wikiUrl;
+    wiktionaryLinkWrap.hidden = false;
+    onlineDictStatus.textContent = "Translation and example sentences using your searched word are displayed. Examples are taken from the source when available; otherwise they are generated as practice examples.";
+  } catch (error) {
+    onlineDictStatus.textContent = "Online lookup failed. Check your internet connection or try again later. The offline vocabulary is still available.";
+  } finally {
+    onlineDictBtn.disabled = false;
+    onlineDictBtn.textContent = "🌐 Online translation";
+  }
+});
+
+// =========================================================================
+// LIVE WIKTIONARY LOOKUP FOR LARGE VERB / NOUN VOCABULARY
+// The offline database remains fast; online lookup extends it without inventing forms.
+// =========================================================================
+async function wiktionaryExtract(term) {
+  const title = term.trim().replace(/\s+/g, "_");
+  const url = `https://de.wiktionary.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&origin=*&titles=${encodeURIComponent(title)}`;
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`Wiktionary returned ${response.status}`);
+  const data = await response.json();
+  const pages = data?.query?.pages || {};
+  const page = Object.values(pages)[0];
+  if (!page || page.missing !== undefined || !page.extract) throw new Error("Word not found in German Wiktionary");
+  return { title: page.title, extract: page.extract };
+}
+
+function detectGermanGender(text) {
+  const patterns = [
+    [/\bSubstantiv\s*,\s*(?:m|maskulin(?:um)?)\b/i, "der"],
+    [/\bSubstantiv\s*,\s*(?:f|feminin(?:um)?)\b/i, "die"],
+    [/\bSubstantiv\s*,\s*(?:n|neutrum)\b/i, "das"],
+    [/\bGenus\s*:\s*(?:m|Maskulinum|maskulin)\b/i, "der"],
+    [/\bGenus\s*:\s*(?:f|Femininum|feminin)\b/i, "die"],
+    [/\bGenus\s*:\s*(?:n|Neutrum|neutral)\b/i, "das"],
+    [/\bgrammatisches Geschlecht\s*:\s*(?:m|maskulin)\b/i, "der"],
+    [/\bgrammatisches Geschlecht\s*:\s*(?:f|feminin)\b/i, "die"],
+    [/\bgrammatisches Geschlecht\s*:\s*(?:n|neutrum)\b/i, "das"],
+    [/\bWortart\s*:\s*Substantiv\b[\s\S]{0,180}?\b(m|Maskulinum)\b/i, "der"],
+    [/\bWortart\s*:\s*Substantiv\b[\s\S]{0,180}?\b(f|Femininum)\b/i, "die"],
+    [/\bWortart\s*:\s*Substantiv\b[\s\S]{0,180}?\b(n|Neutrum)\b/i, "das"]
+  ];
+  for (const [re, article] of patterns) if (re.test(text)) return article;
+  return null; // Unknown gender stays unknown; never default to "das".
+}
+
+function detectGermanPlural(text) {
+  const patterns = [
+    /Plural\s*:\s*([^\n,;]+)/i,
+    /Nominativ\s+Plural\s*:?\s*([^\n,;]+)/i,
+    /\bPluralform\s*:?\s*([^\n,;]+)/i
+  ];
+  for (const re of patterns) {
+    const m = text.match(re);
+    if (m && m[1]) return m[1].trim().replace(/^die\s+/i, "");
+  }
+  return null;
+}
+
+// Fetch real German Wiktionary lemma titles on demand for broader autocomplete.
+// This is an index only: definitions, articles and conjugations are looked up per word.
+const remoteVerbWords = [];
+const remoteNounWords = [];
+let remoteVerbLoad = null;
+let remoteNounLoad = null;
+async function loadWiktionaryCategory(category, target, limit) {
+  let continuation = "";
+  const seen = new Set(target);
+  while (target.length < limit) {
+    const url = `https://de.wiktionary.org/w/api.php?action=query&list=categorymembers&cmtitle=${encodeURIComponent(category)}&cmtype=page&cmlimit=500&format=json&origin=*${continuation}`;
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Wiktionary category request failed");
+    const data = await response.json();
+    for (const item of (data?.query?.categorymembers || [])) {
+      const word = item.title;
+      // Keep single-word lemma candidates; do not treat conjugated multiword forms as lemmas.
+      if (/^[\p{L}ÄÖÜäöüß-]+$/u.test(word) && !seen.has(word.toLowerCase())) {
+        seen.add(word.toLowerCase());
+        target.push(word);
+        if (target.length >= limit) break;
+      }
+    }
+    if (!data?.continue?.cmcontinue) break;
+    continuation = `&cmcontinue=${encodeURIComponent(data.continue.cmcontinue)}`;
+  }
+  return target;
+}
+function ensureRemoteVerbIndex() {
+  if (!remoteVerbLoad) remoteVerbLoad = loadWiktionaryCategory("Kategorie:Verb (Deutsch)", remoteVerbWords, 1000).then(() => {
+    verbInput.dispatchEvent(new Event("input"));
+    onlineVerbStatus.textContent = `Online verb index ready: ${remoteVerbWords.length} German Wiktionary entries. Select a word and use Search online verb for meanings.`;
+  }).catch(() => { onlineVerbStatus.textContent = "Could not load the online verb index. You can still enter a word and search it directly."; });
+  return remoteVerbLoad;
+}
+function ensureRemoteNounIndex() {
+  if (!remoteNounLoad) remoteNounLoad = loadWiktionaryCategory("Kategorie:Substantiv (Deutsch)", remoteNounWords, 2000).then(() => {
+    nounInput.dispatchEvent(new Event("input"));
+    onlineNounStatus.textContent = `Online noun index ready: ${remoteNounWords.length} German Wiktionary entries. Select a word and use Search online noun to check its article.`;
+  }).catch(() => { onlineNounStatus.textContent = "Could not load the online noun index. You can still enter a word and search it directly."; });
+  return remoteNounLoad;
+}
+verbInput.addEventListener("focus", ensureRemoteVerbIndex, { once: true });
+nounInput.addEventListener("focus", ensureRemoteNounIndex, { once: true });
+
+const onlineVerbBtn = document.getElementById("onlineVerbBtn");
+const onlineVerbStatus = document.getElementById("onlineVerbStatus");
+const onlineNounBtn = document.getElementById("onlineNounBtn");
+const onlineNounStatus = document.getElementById("onlineNounStatus");
+
+onlineVerbBtn.addEventListener("click", async () => {
+  const term = verbInput.value.trim();
+  if (!term) { onlineVerbStatus.textContent = "Enter a German infinitive first."; verbInput.focus(); return; }
+  onlineVerbBtn.disabled = true;
+  onlineVerbStatus.textContent = "Checking Wiktionary and preparing verb forms…";
+  try {
+    const localMatch = VERBS_DB.find(v => v.inf.toLocaleLowerCase("de") === term.toLocaleLowerCase("de"));
+    const regularMatch = localMatch ? null : makeRegularOfflineVerb(term.toLocaleLowerCase("de"));
+    const [wiki, fa, en, uk] = await Promise.all([
+      wiktionaryExtract(term),
+      translateOnlineGerman(term, "fa"),
+      translateOnlineGerman(term, "en"),
+      translateOnlineGerman(term, "uk")
+    ]);
+    document.getElementById("verbWikiLink").href = `https://de.wiktionary.org/wiki/${encodeURIComponent(wiki.title.replace(/ /g, "_"))}`;
+    document.getElementById("verbWikiWrap").hidden = false;
+    if (localMatch || regularMatch) {
+      const v = localMatch || regularMatch;
+      renderVerbResult(v, term);
+      document.getElementById("verbSourceNote").textContent = localMatch
+        ? "Conjugation and examples: verified built-in verb list. Translation: online."
+        : "Conjugation generated with regular-verb rules. Please verify separable verbs and exceptions in the linked Wiktionary entry.";
+      document.getElementById("verbFa").textContent = fa;
+      document.getElementById("verbEn").textContent = en;
+      document.getElementById("verbUk").textContent = uk;
+      onlineVerbStatus.textContent = "Online translation loaded. Separable regular verbs are conjugated with the prefix in the correct position.";
+    } else {
+      selectedVerbObj = null;
+      ["verbPraesens","verbPerfekt","verbFutur"].forEach(id => document.getElementById(id).textContent = "Please verify in Wiktionary");
+      ["verbExPraesens","verbExPerfekt","verbExFutur"].forEach(id => document.getElementById(id).textContent = "Example: Open the linked entry for a sourced example.");
+      setConjugationCells(term + " (irregular / not verified)", null);
+      document.getElementById("verbSourceNote").textContent = "Translation found online. This verb is not in the verified irregular list; its conjugation is not guessed.";
+      document.getElementById("verbFa").textContent = fa;
+      document.getElementById("verbEn").textContent = en;
+      document.getElementById("verbUk").textContent = uk;
+      onlineVerbStatus.textContent = "Translation loaded. This verb is not in the verified conjugation list; use the Wiktionary source to confirm irregular forms.";
+    }
+  } catch (error) {
+    onlineVerbStatus.textContent = "Online lookup failed or the word was not found. Check spelling and internet connection.";
+  } finally { onlineVerbBtn.disabled = false; }
+});
+
+onlineNounBtn.addEventListener("click", async () => {
+  const term = nounInput.value.trim();
+  if (!term) { onlineNounStatus.textContent = "Enter a German noun first."; nounInput.focus(); return; }
+  onlineNounBtn.disabled = true;
+  onlineNounStatus.textContent = "Checking noun gender and plural in German Wiktionary…";
+  try {
+    const [wiki, fa, en, uk] = await Promise.all([
+      wiktionaryExtract(term),
+      translateOnlineGerman(term, "fa"),
+      translateOnlineGerman(term, "en"),
+      translateOnlineGerman(term, "uk")
+    ]);
+    const article = detectGermanGender(wiki.extract);
+    const plural = detectGermanPlural(wiki.extract);
+    document.getElementById("nounMainDisplay").textContent = article ? `${article} ${wiki.title}` : wiki.title;
+    document.getElementById("nounArticleText").textContent = article ? `${article} ${wiki.title}` : "Gender not reliably extracted — open Wiktionary";
+    document.getElementById("nounPluralText").textContent = plural || "Not reliably extracted — see Wiktionary";
+    document.getElementById("nounFa").textContent = fa;
+    document.getElementById("nounEn").textContent = en;
+    document.getElementById("nounUk").textContent = uk;
+    document.getElementById("nounExample").textContent = article
+      ? `Das ist ${article} ${wiki.title}.`
+      : `Das Wort „${wiki.title}“: Artikel bitte über den Wiktionary-Link prüfen.`;
+    document.getElementById("nounSourceNote").textContent = article ? "Gender detected from the German Wiktionary entry; verify the linked source if needed." : "Translation loaded. Article and plural were not guessed because the page format did not yield a reliable result.";
+    document.getElementById("nounWikiLink").href = `https://de.wiktionary.org/wiki/${encodeURIComponent(wiki.title.replace(/ /g, "_"))}`;
+    document.getElementById("nounWikiWrap").hidden = false;
+    onlineNounStatus.textContent = article ? "Online noun entry found." : "Entry found, but article could not be extracted with confidence. Open the source link to verify.";
+  } catch (error) {
+    onlineNounStatus.textContent = "Online lookup failed or the word was not found. Check the spelling or internet connection.";
+  } finally { onlineNounBtn.disabled = false; }
+});
+
+// =========================================================================
+// CASE QUIZ FEEDBACK
+// =========================================================================
+function checkCaseQuiz(kind, answer) {
+  const correct = kind === 'akk' ? 'den' : 'der';
+  const el = document.getElementById(kind + '-feedback');
+  if (answer === correct) { el.textContent = '✓ Correct!'; el.style.color = '#047857'; }
+  else { el.textContent = `✗ Correct answer: ${correct}`; el.style.color = '#b91c1c'; }
+}
+
+
+
+// =========================================================================
+// LIVE, TYPO-TOLERANT ONLINE AUTOCOMPLETE
+// Uses German Wiktionary's prefix search + full-text search while the user types.
+// Search results are suggestions only; article/conjugation details are not guessed.
+// =========================================================================
+const liveSuggestionState = new Map();
+function normalizeSuggestionTitle(value) {
+  return String(value || '').replace(/_/g, ' ').trim();
+}
+async function fetchWiktionarySuggestions(query, limit = 8) {
+  const q = query.trim();
+  if (q.length < 2) return [];
+  const base = 'https://de.wiktionary.org/w/api.php?action=query&format=json&origin=*';
+  const prefixUrl = `${base}&list=prefixsearch&psnamespace=0&pslimit=${limit}&pssearch=${encodeURIComponent(q)}`;
+  const fuzzyUrl = `${base}&list=search&srnamespace=0&srlimit=${limit}&srsearch=${encodeURIComponent(q)}`;
+  const responses = await Promise.allSettled([fetch(prefixUrl), fetch(fuzzyUrl)]);
+  const titles = new Map();
+  for (const result of responses) {
+    if (result.status !== 'fulfilled' || !result.value.ok) continue;
+    try {
+      const data = await result.value.json();
+      const items = [
+        ...(data?.query?.prefixsearch || []),
+        ...(data?.query?.search || [])
+      ];
+      for (const item of items) {
+        const title = normalizeSuggestionTitle(item.title);
+        if (/^[\p{L}ÄÖÜäöüß][\p{L}ÄÖÜäöüß-]*$/u.test(title)) {
+          const key = title.toLocaleLowerCase('de');
+          if (!titles.has(key)) titles.set(key, title);
+        }
+      }
+    } catch (_) { /* Ignore a failed suggestion source; keep the other source. */ }
+  }
+  return [...titles.values()].slice(0, limit);
+}
+function appendOnlineSuggestion(list, title, detail, onChoose) {
+  const item = document.createElement('div');
+  item.className = 'ac-item';
+  const main = document.createElement('span');
+  main.className = 'ac-word';
+  main.textContent = title;
+  const sub = document.createElement('span');
+  sub.className = 'ac-sub';
+  sub.textContent = detail;
+  item.append(main, sub);
+  item.addEventListener('mousedown', event => {
+    event.preventDefault();
+    onChoose();
+  });
+  list.appendChild(item);
+}
+function setupLiveOnlineSuggestions(input, list, kind) {
+  let timer = null;
+  let requestNumber = 0;
+  input.addEventListener('input', () => {
+    clearTimeout(timer);
+    const query = input.value.trim();
+    const currentRequest = ++requestNumber;
+    if (query.length < 2) return;
+    timer = setTimeout(async () => {
+      const stateKey = `${kind}:${query.toLocaleLowerCase('de')}`;
+      try {
+        let suggestions = liveSuggestionState.get(stateKey);
+        if (!suggestions) {
+          suggestions = await fetchWiktionarySuggestions(query, 8);
+          liveSuggestionState.set(stateKey, suggestions);
+        }
+        if (currentRequest !== requestNumber || input.value.trim() !== query || !suggestions.length) return;
+        // Keep the offline suggestions already rendered; add only new online titles.
+        const existing = new Set([...list.querySelectorAll('.ac-word')].map(el => el.textContent.replace(/^(der|die|das|\?)\s+/i, '').toLocaleLowerCase('de')));
+        const fresh = suggestions.filter(word => !existing.has(word.toLocaleLowerCase('de')));
+        if (!fresh.length) return;
+        if (list.style.display !== 'block') list.style.display = 'block';
+        const note = document.createElement('div');
+        note.className = 'ac-online-note';
+        note.textContent = 'Online spelling suggestions • choose a word to verify it';
+        list.appendChild(note);
+        for (const word of fresh) {
+          if (kind === 'verb') {
+            appendOnlineSuggestion(list, word, 'Online verb candidate — check entry', () => {
+              input.value = word; list.style.display = 'none';
+              renderVerbResult(null, word);
+              onlineVerbStatus.textContent = 'Checking the selected spelling online…';
+              onlineVerbBtn.click();
+            });
+          } else if (kind === 'noun') {
+            appendOnlineSuggestion(list, `? ${word}`, 'Online noun candidate — article not yet verified', () => {
+              input.value = word; list.style.display = 'none';
+              renderNounResult(null, word);
+              onlineNounStatus.textContent = 'Checking spelling, article and plural online…';
+              onlineNounBtn.click();
+            });
+          } else {
+            appendOnlineSuggestion(list, word, 'Online dictionary result', () => {
+              input.value = word; list.style.display = 'none';
+              onlineDictStatus.textContent = 'Looking up the selected word…';
+              onlineDictBtn.click();
+            });
+          }
+        }
+      } catch (_) {
+        // Offline autocomplete remains available if the network is unavailable.
+      }
+    }, 280);
+  });
+}
+setupLiveOnlineSuggestions(verbInput, verbAcList, 'verb');
+setupLiveOnlineSuggestions(nounInput, nounAcList, 'noun');
+setupLiveOnlineSuggestions(dictInput, dictAcList, 'dict');
+</script>
+</body>
+</html>
